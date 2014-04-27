@@ -26,8 +26,8 @@ var x = new Album({
 Simple setters and getters
 
 ```js
-Book = resource()
-  .prop('genre')
+var Book = resource()
+  .attr('genre');
 
 book.genre = 'fiction';
 book.genre; // === 'fiction'
@@ -36,9 +36,15 @@ book.genre; // === 'fiction'
 States:
 
 ```js
+book.is.fresh
 book.is.fetching
 book.is.loaded
 book.is.error
 ```
 
+Collections:
 
+```js
+Books = resource.list()
+
+```

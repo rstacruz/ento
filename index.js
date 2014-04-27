@@ -29,7 +29,7 @@
    *
    * State `res.state` can be:
    *
-   *  * 'idle' - just started
+   *  * 'idle' - just started (deprecate me)
    *  * 'fetching' - fetching data
    *  * 'error' - something went wrong
    *  * 'data' - there's data available
@@ -43,25 +43,30 @@
    * You also have:
    *
    *     res.fresh           // true if never fetched
-   *     res.endpoint.get    // "/api/trips"
-   *     res.api             // link to Tripid instance
+   *     res.api             // link to root instance
    *     res.error           // { message: "Not allowed", status: 402 }
    *
    * To fetch:
    *
    *     res.fetch(function (err, res) {
    *     });
-   *
-   * Internal stuff:
-   *
-   *     this.api.userRequest('...')
    */
 
-  var Resource = module.exports = function (api, options) {
+  var Resource = module.exports = function () {
+    var api, options;
+
+    for (var i=0, len=arguments.length; i<len; i++) {
+      if (i === 0 && arguments[0] && arguments[0].sync) {
+        api = arguments[0];
+      } else if (typeof arguments[i] === 'object' && !options) {
+        options = arguments[i];
+      }
+    }
+
     /** state: status of the resource */
     this.state = 'idle';
 
-    /** api: Tripid instance */
+    /** api: Root instance */
     this.api = api;
 
     /** fresh: true if not fetched */
