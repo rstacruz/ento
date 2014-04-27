@@ -229,6 +229,13 @@
     return str.trim().replace(/[-_\s]+(.)?/g, function (match, c) { return c.toUpperCase(); });
   }
 
-  return Resource;
+  function Rsrc() {
+    return Resource.extend();
+  }
+
+  Rsrc.events = require('./lib/events')(_);
+  Rsrc.resource = Resource;
+
+  return Rsrc;
 
 }));

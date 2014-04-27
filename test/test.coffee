@@ -1,11 +1,13 @@
-Resource = null
-global.expect = require('chai').expect
+describe 'Tests', ->
+  require('./setup')()
 
-before ->
-  Resource = require('../index')
+  it 'has events', ->
+    expect(Rsrc.events).be.a 'object'
 
-it 'ok', ->
+  it 'basic use case', ->
+    @Book = Rsrc()
+    @api = { sync: -> }
+    @book = new @Book(@api, title: "Hello")
+    expect(@book.title).eq "Hello"
 
-it 'has events', ->
-  expect(Resource.events).be.a 'object'
 
