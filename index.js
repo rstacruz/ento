@@ -29,7 +29,7 @@
    *
    * State `res.state` can be:
    *
-   *  * 'idle' - just started (deprecate me)
+   *  * 'idle' - just started
    *  * 'fetching' - fetching data
    *  * 'error' - something went wrong
    *  * 'data' - there's data available
@@ -242,7 +242,7 @@
 
   Rsrc.events = require('./lib/events')(_);
   _.extend(Resource.prototype, Rsrc.events);
-  Rsrc.resource = Resource;
+  Rsrc.object = Resource;
 
   return Rsrc;
 
