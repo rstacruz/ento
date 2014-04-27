@@ -1,0 +1,20 @@
+{
+  "name": "resource",
+  "version": "0.0.0",
+  "description": "orm",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "author": "Rico Sta. Cruz <hi@ricostacruz.com>",
+  "license": "ISC",
+  "dependencies": {
+    "underscore": "^1.6.0"
+  },
+  "devDependencies": {
+    "coffee-script": "^1.7.1",
+    "mocha": "^1.18.2",
+    "chai-fuzzy": "^1.4.0",
+    "chai": "^1.9.1"
+  }
+}
