@@ -15,6 +15,8 @@
 
 }(this, function (_) {
 
+  if (!_) throw new Error("Rsrc: underscore.js not found.");
+
   // Create local references to array methods we'll want to use later.
   var array = [];
   var push = array.push;

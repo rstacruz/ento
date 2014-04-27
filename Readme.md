@@ -33,7 +33,12 @@ book.genre = 'fiction';
 book.genre; // === 'fiction'
 ```
 
-Properties:
+States:
 
 ```js
+book.is.fetching
+book.is.loaded
+book.is.error
 ```
+
+
