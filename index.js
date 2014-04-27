@@ -1,14 +1,17 @@
 (function(root, factory) {
 
-  module.exports = factory(require('underscore'));
+  if (typeof define === 'function' && define.amd) {
+    define(['underscore'], factory); /* AMD */
+  } else if (typeof exports === 'object') {
+    module.exports = factory(underscore()); /* CommonJS */
+  } else {
+    root.Resource = factory(underscore()); /* Globals */
+  }
 
-  // if (typeof define === 'function' && define.amd) {
-  //   define(['underscore'], factory); /* AMD */
-  // } else if (typeof exports === 'object') {
-  //   factory(root._); /* CommonJS */
-  // } else {
-  //   root.Resource = factory(root._); /* Globals */
-  // }
+  function underscore() {
+    try { return require('underscore'); }
+    catch (e) { return root._; }
+  }
 
 }(this, function (_) {
 
@@ -221,9 +224,6 @@
    */
 
   Resource.extend = require('./lib/extend')(_);
-  Resource.events = require('./lib/events')(_);
-
-  _.extend(Resource.prototype, Resource.Events);
 
   function camelize (str) {
     return str.trim().replace(/[-_\s]+(.)?/g, function (match, c) { return c.toUpperCase(); });
@@ -234,6 +234,7 @@
   }
 
   Rsrc.events = require('./lib/events')(_);
+  _.extend(Resource.prototype, Rsrc.events);
   Rsrc.resource = Resource;
 
   return Rsrc;
