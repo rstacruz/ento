@@ -1,28 +1,28 @@
 # resource.js
 
-ORM.
-
- * Works on Node.js and on the browser.
- * No persistence - implement it yourself.
- * Simplest possible API.
-
-### Why?
+Yet another model library.
 
 - __Simple attributes__:
 No need for methods to get/set values (ie, *.get()* and *.set()*).  ECMAScript 
-getters and setters are used. (unlike Backbone.Model)
+getters and setters are used.
 
 - __Model states__:
-Keeps track of your model's state if it's fetching, got an error, etc -- this 
-makes it suitable for using in data-binding view libraries.
+Keeps track of your model's state if it's fetching, or got an error. This is 
+useful when used with data-binding view libraries.
 
 - __Custom sync__:
-No AJAX, no whatever - no assumptions on how you want to sync your data.  
-(unlike most others)
+No persistence is built in. No AJAX, no SQL, no nothing. It makes no assumptions 
+on how you want to sync your data, and allows you to implement it however you 
+need it.
 
-## Simple API
+- __Browser, or Node.js__:
+Reuse the same business code in your client-side libs and your server-side libs.
 
-### Making a class and instanciation
+## API
+
+API is made to be as simple as possible.
+
+### Basic usage
 
 Running *resource()* makes a new class.
 
@@ -30,7 +30,7 @@ Running *resource()* makes a new class.
 var Album = resource();
 ```
 
-### Instanciate
+With you can instanciate.
 
 ```js
 var album = new Album({
@@ -43,6 +43,8 @@ console.log(album.year);
 ```
 
 ### Methods
+
+*use()* adds to the prototype.
 
 ```js
 var Person = resource()
@@ -58,6 +60,8 @@ me.greet();
 ```
 
 ### Making a class, full edition
+
+Chaining, awesome.
 
 ```js
 var Person = resource()
