@@ -32,7 +32,16 @@ describe 'Tests', ->
       item.title = 'hi'
       expect(item.title).eq 'hi'
 
+    it "doesn't propagate to global", ->
+      expect(ostruct.object.properties).be.like []
+
     it 'sets raw', ->
       item.title = 'hi'
       expect(item.raw.title).eq 'hi'
+
+    it 'adds to properties', ->
+      expect(item.constructor.properties).be.like ['title']
+
+    it 'adds to properties, 2', ->
+      expect(Book.properties).be.like ['title']
 

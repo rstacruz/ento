@@ -1,6 +1,10 @@
 module.exports = ->
   before ->
-    global.expect = require('chai').expect
+    global.chai = require('chai')
+    chai.use require('chai-fuzzy')
+
+  before ->
+    global.expect = chai.expect
 
   before ->
     global.ostruct = require('../index')

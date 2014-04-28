@@ -68,6 +68,7 @@
      */
 
     set: function (key, value) {
+      // handle objects (.set({...}))
       if (arguments.length === 1 && typeof key === 'object') {
         for (var k in key) {
           if (key.hasOwnProperty(k)) this.set(k, key[k]);
@@ -75,19 +76,21 @@
         return;
       }
 
-      var fnName = camelize("set_"+key);
-      if (this[fnName])
-        return this[fnName](value);
-      else
-        this[key] = value;
+      // set raw
+      this[key] = value;
     }
   };
 
-  /**
-   * properties : Array
-   * List of properties.
-   */
-  Resource.properties = [];
+  Resource.extended = function () {
+    /**
+     * properties : Array
+     * List of properties.
+     */
+
+    this.properties = [];
+  };
+
+  Resource.extended();
 
   /**
    * attr : attr(name, [...])
