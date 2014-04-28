@@ -76,7 +76,7 @@
         return;
       }
 
-      // set raw
+      // set raw; use the setter
       this[key] = value;
     }
   };
@@ -105,6 +105,8 @@
    */
 
   Resource.attr = function (name) {
+    var options = {};
+
     this.properties.push(name);
 
     Object.defineProperty(this.prototype, name, {
@@ -114,6 +116,7 @@
       },
       set: function (value) {
         this.raw[name] = value;
+        this.trigger('change:'+name, value);
       }
     });
 
