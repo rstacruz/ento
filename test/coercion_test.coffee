@@ -59,3 +59,11 @@ describe 'attribute coercion', ->
 
     item = new Book(publishedAt: '2014/01/01')
     expect(+item.publishedAt).to.eql 1388505600000
+
+  it 'date 2', ->
+    Person = ento()
+      .attr('birthday', Date)
+
+    me = new Person()
+    me.birthday = "1915-12-02T12:00:00Z"
+    expect(me.birthday.toString()).to.match /Thu Dec 02 1915/

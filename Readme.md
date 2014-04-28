@@ -27,7 +27,7 @@ API is made to be as simple as possible.
 
 ### Basic usage
 
-Running *ento()* makes a new class, which you can instanciate.
+Running *Ento()* makes a new class, which you can instanciate.
 
 ```js
 var Ento = require('ento');
@@ -45,6 +45,28 @@ var album = new Album({
 console.log(album.year);
 ```
 
+### Defining attributes
+
+Use *attr()* to define properties. This will enable features on those properties 
+such as change tracking, type coercion, and more.
+
+```js
+var Person = Ento()
+  .attr('id', Number)
+  .attr('firstName')
+  .attr('lastName')
+  .attr('address', String)
+  .attr('birthday', Date)
+  .attr('fullName', function () { return /*...*/; })
+  .use(Ento.exportable)
+  .use({
+    // instance methods here
+  });
+
+var me = new Person({ firstName: "Frank", lastName: "Sinatra" });
+me.birthday = "1915-12-02T12:00:00Z";
+```
+
 ### Methods
 
 *use()* adds to the prototype.
@@ -59,23 +81,6 @@ var Person = Ento()
 
 var me = new User({ name: "Miles Davis" });
 me.greet();
-```
-
-### Making a class, full edition
-
-Chaining, awesome.
-
-```js
-var Person = Ento()
-  .prop('firstName')
-  .prop('lastName')
-  .prop('age', Number)
-  .prop('birthday', Date)
-  .prop('fullName', function () { return /*...*/; })
-  .use(Ento.exportable)
-  .use({
-    // instance methods here
-  });
 ```
 
 ### Simple attributes
@@ -134,13 +139,18 @@ book.set({ genre: 'fiction' });
 ### States
 
 ```js
-book.is.fresh
-book.is.fetching
-book.is.loaded
-book.is.error
+book.is.fresh    // hasn't been modified since instanciation
+book.is.new      // has an ID
+book.is.busy     // is fetching/saving/deleting
+book.is.fetching // is currently fetching
+book.is.loaded   // has been fetched
+book.is.saving   // is currently saving
+book.is.deleting // is currently being deleted
+book.is.deleted  // has been deleted
+book.is.error    // persistence errors
 ```
 
-### Collections
+### Collections (not yet)
 
 ```js
 Books = Ento.list()
@@ -158,3 +168,4 @@ class Book extends Ento.object
 
   burn: ->
     ...
+```
