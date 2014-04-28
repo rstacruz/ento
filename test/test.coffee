@@ -63,10 +63,14 @@ describe 'Tests', ->
       expect(item.raw.title).eq 'hi'
 
     it 'adds to properties', ->
-      expect(item.constructor.properties).be.like { title:{}, in_stock: {} }
+      expect(Object.keys(item.constructor.properties)).be.like ['title', 'in_stock']
 
     it 'adds to properties, 2', ->
-      expect(Book.properties).be.like { title:{}, in_stock: {} }
+      expect(Object.keys(Book.properties)).be.like ['title', 'in_stock']
+
+    it 'property definition', ->
+      expect(Book.properties.title).be.a 'object'
+      expect(Book.properties.in_stock).be.a 'object'
 
     it 'propertyNames', ->
       expect(Book.propertyNames()).be.like ['title', 'in_stock']

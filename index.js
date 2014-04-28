@@ -136,10 +136,13 @@
       }
     }
 
+    if (typeof options.enumerable === 'undefined')
+      options.enumerable = true;
+
     this.properties[name] = options;
 
     var props = {
-      enumerable: true,
+      enumerable: options.enumerable,
       get: options.get || function () {
         return this.raw[name];
       },
