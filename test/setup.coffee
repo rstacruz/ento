@@ -7,6 +7,6 @@ before ->
 
 before ->
   if process.env.distfile?
-    global.ostruct = require('../' + process.env.distfile)
+    global.ento = require('../' + process.env.distfile)
   else
-    global.ostruct = require('../index.js')
+    global.ento = require('../index.js')

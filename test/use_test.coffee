@@ -4,7 +4,7 @@ describe 'use', ->
   it 'basic use', ->
     msg = ''
 
-    Person = ostruct().use
+    Person = ento().use
       greet: ->
         msg += "Hello, #{@name}"
 
@@ -15,7 +15,7 @@ describe 'use', ->
     Armored = { armor: -> 200 }
     Villain = { alignment: -> 'evil' }
 
-    Unit = ostruct()
+    Unit = ento()
       .use(Villain)
       .use(Armored)
 
@@ -25,7 +25,7 @@ describe 'use', ->
     expect(mob.armor()).eq 200
 
   it 'static props', ->
-    Unit = ostruct()
+    Unit = ento()
       .use(null, foo: true)
 
     expect(Unit.foo).eq true
@@ -36,7 +36,7 @@ describe 'use', ->
         .attr('armor')
         .attr('hasArmor', -> @armor > 0)
       
-    Unit = ostruct().use(Armored)
+    Unit = ento().use(Armored)
     mob = new Unit(armor: 0)
 
     expect(mob.armor).eq 0

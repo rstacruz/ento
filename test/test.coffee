@@ -5,37 +5,37 @@ item = null
 
 describe 'Tests', ->
   it 'has events', ->
-    expect(ostruct.events).be.a 'object'
+    expect(ento.events).be.a 'object'
 
   describe 'basic use case', ->
     it 'with api', ->
       @api = { sync: -> }
-      Book = ostruct()
+      Book = ento()
       item = new Book(@api, title: "Hello")
       expect(item.title).eq "Hello"
 
     it 'without api', ->
-      Book = ostruct()
+      Book = ento()
       item = new Book(title: "Hello")
       expect(item.title).eq "Hello"
 
   describe 'set', ->
     it 'mass set', ->
-      Book = ostruct()
+      Book = ento()
       item = new Book()
       item.set(title: "X", author: "Y")
       expect(item.title).eq "X"
       expect(item.author).eq "Y"
 
     it 'single set', ->
-      Book = ostruct()
+      Book = ento()
       item = new Book()
       item.set 'title', 'X'
       expect(item.title).eq "X"
 
   describe 'attributes', ->
     beforeEach ->
-      Book = ostruct()
+      Book = ento()
         .attr('title')
         .attr('in_stock')
       item = new Book()
@@ -48,7 +48,7 @@ describe 'Tests', ->
       expect(item.title).eq 'hi'
 
     it "doesn't propagate to global", ->
-      expect(ostruct.object.properties).be.like {}
+      expect(ento.object.properties).be.like {}
 
     it 'sets raw', ->
       item.title = 'hi'

@@ -6,7 +6,7 @@ item = null
 describe 'getter', ->
   describe 'getter', ->
     beforeEach ->
-      Name = ostruct()
+      Name = ento()
         .attr('first')
         .attr('last')
         .attr('full', -> "#{@first} #{@last}")
@@ -16,7 +16,7 @@ describe 'getter', ->
       expect(item.full).eq 'Miles Davis'
 
   it 'getter, alt syntax', ->
-    Name = ostruct()
+    Name = ento()
       .attr('first')
       .attr('last')
       .attr('full', get: -> "#{@first} #{@last}")
@@ -25,7 +25,7 @@ describe 'getter', ->
     expect(item.full).eq 'Miles Davis'
 
   it 'setter', (done) ->
-    Name = ostruct()
+    Name = ento()
       .attr('first', set: -> done())
 
     item = new Name()

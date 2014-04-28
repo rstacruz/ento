@@ -1,6 +1,6 @@
-# ostruct.js
+# ento.js
 
-Yet another model library.
+*Re*active *struct* - yet another model library. WIP.
 
 - __Simple attributes__:
 No need for methods to get/set values (ie, *.get()* and *.set()*).  ECMAScript 
@@ -24,12 +24,12 @@ API is made to be as simple as possible.
 
 ### Basic usage
 
-Running *ostruct()* makes a new class, which you can instanciate.
+Running *ento()* makes a new class, which you can instanciate.
 
 ```js
-var ostruct = require('ostruct');
+var ento = require('ento');
 
-var Album = ostruct();
+var Album = ento();
 
 var album = new Album({
   title: "Splenenie",
@@ -45,7 +45,7 @@ console.log(album.year);
 *use()* adds to the prototype.
 
 ```js
-var Person = ostruct()
+var Person = ento()
   .use({
     greet: function() {
       alert("Hi, " + this.name);
@@ -61,13 +61,13 @@ me.greet();
 Chaining, awesome.
 
 ```js
-var Person = ostruct()
+var Person = ento()
   .prop('firstName')
   .prop('lastName')
   .prop('age', Number)
   .prop('birthday', Date)
   .prop('fullName', function () { return /*...*/; })
-  .use(ostruct.validations)
+  .use(ento.validations)
   .use({
     // instance methods here
   });
@@ -78,7 +78,7 @@ var Person = ostruct()
 No fancy syntax here.
 
 ```js
-var Book = ostruct()
+var Book = ento()
   .attr('genre');
 
 book.genre = 'fiction';
@@ -88,7 +88,7 @@ book.genre; //=> 'fiction'
 ### Dynamic attrs
 
 ```js
-var User = ostruct()
+var User = ento()
   .attr('fullName', function () {
       return this.firstName + ' ' + this.lastName;
   });
@@ -104,7 +104,7 @@ common problem of having the backend (eg, Rails) have underscored conventions,
        while .js files tend to have camelCase conventions.
 
 ```js
-var User = ostruct()
+var User = ento()
   .attr('firstName')
   .attr('lastName');
 
@@ -138,7 +138,7 @@ book.is.error
 ### Collections
 
 ```js
-Books = ostruct.list()
+Books = ento.list()
 books = new Books([ {...}, {...} ])
 books.items
 books.each(...)
@@ -147,7 +147,7 @@ books.each(...)
 ### CoffeeScript support
 
 ```coffee
-class Book extends ostruct.object
+class Book extends ento.object
   @attr 'title'
   @attr 'genre'
 

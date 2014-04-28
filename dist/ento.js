@@ -5,7 +5,7 @@
   } else if (typeof exports === 'object') {
     module.exports = factory(underscore()); /* CommonJS */
   } else {
-    root.Ostruct = factory(underscore()); /* Globals */
+    root.Ento = factory(underscore()); /* Globals */
   }
 
   function underscore() {
@@ -15,15 +15,15 @@
 
 }(this, function (_) {
 
-  if (!_) throw new Error("Ostruct: underscore.js not found.");
+  if (!_) throw new Error("Ento: underscore.js not found.");
 
   var Objekt;
 
-  function Ostruct() {
+  function Ento() {
     return Objekt.extend();
   }
 
-  Ostruct.events = ((function(){var module={exports:{}},exports=module.exports;(function(){var slice = [].slice;
+  Ento.events = ((function(){var module={exports:{}},exports=module.exports;(function(){var slice = [].slice;
 
 module.exports = function (_) {
   // Backbone.Events
@@ -191,7 +191,7 @@ module.exports = function (_) {
   return Events;
 };
 })();return module.exports;})())(_);
-  Ostruct.persistence = ((function(){var module={exports:{}},exports=module.exports;(function(){module.exports = {
+  Ento.persistence = ((function(){var module={exports:{}},exports=module.exports;(function(){module.exports = {
   /** itemClass: the class of each item */
   itemClass: null,
 
@@ -457,7 +457,7 @@ module.exports = function (_) {
    * propertyNames:
    * returns property names.
    *
-   *     Name = ostruct()
+   *     Name = ento()
    *       .attr('first')
    *       .attr('last');
    *
@@ -482,7 +482,7 @@ module.exports = function (_) {
    *
    * Example:
    *
-   *     var Person = ostruct()
+   *     var Person = ento()
    *       .attr('name')
    *       .use({
    *         greet: function() {
@@ -498,7 +498,7 @@ module.exports = function (_) {
    *         .attr('updatedAt');
    *     }
    *
-   *     var Record = ostruct().use(Timestamps);
+   *     var Record = ento().use(Timestamps);
    */
 
   Objekt.use = function (props, staticProps) {
@@ -597,10 +597,10 @@ module.exports = function (_) {
     }
   }
 
-  Objekt.use(Ostruct.events);
-  Ostruct.object = Objekt;
+  Objekt.use(Ento.events);
+  Ento.object = Objekt;
 
-  return Ostruct;
+  return Ento;
 
 }));
 

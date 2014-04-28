@@ -5,7 +5,7 @@
   } else if (typeof exports === 'object') {
     module.exports = factory(underscore()); /* CommonJS */
   } else {
-    root.Ostruct = factory(underscore()); /* Globals */
+    root.Ento = factory(underscore()); /* Globals */
   }
 
   function underscore() {
@@ -15,16 +15,16 @@
 
 }(this, function (_) {
 
-  if (!_) throw new Error("Ostruct: underscore.js not found.");
+  if (!_) throw new Error("Ento: underscore.js not found.");
 
   var Objekt;
 
-  function Ostruct() {
+  function Ento() {
     return Objekt.extend();
   }
 
-  Ostruct.events = require('./lib/events')(_);
-  Ostruct.persistence = require('./lib/persistence');
+  Ento.events = require('./lib/events')(_);
+  Ento.persistence = require('./lib/persistence');
 
   /**
    * Objekt.
@@ -174,7 +174,7 @@
    * propertyNames:
    * returns property names.
    *
-   *     Name = ostruct()
+   *     Name = ento()
    *       .attr('first')
    *       .attr('last');
    *
@@ -199,7 +199,7 @@
    *
    * Example:
    *
-   *     var Person = ostruct()
+   *     var Person = ento()
    *       .attr('name')
    *       .use({
    *         greet: function() {
@@ -215,7 +215,7 @@
    *         .attr('updatedAt');
    *     }
    *
-   *     var Record = ostruct().use(Timestamps);
+   *     var Record = ento().use(Timestamps);
    */
 
   Objekt.use = function (props, staticProps) {
@@ -277,9 +277,9 @@
     }
   }
 
-  Objekt.use(Ostruct.events);
-  Ostruct.object = Objekt;
+  Objekt.use(Ento.events);
+  Ento.object = Objekt;
 
-  return Ostruct;
+  return Ento;
 
 }));

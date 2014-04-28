@@ -1,6 +1,6 @@
 {
-  "name": "ostruct",
-  "main": "dist/ostruct.js",
+  "name": "ento",
+  "main": "dist/ento.js",
   "version": "0.0.0",
   "authors": [
     "Rico Sta. Cruz <hi@ricostacruz.com>"
