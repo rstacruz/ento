@@ -45,7 +45,7 @@
     }
 
     /** is: states */
-    this.is = { fresh: true };
+    this.is = {};
 
     /** api: Root instance */
     this.api = api;
@@ -54,6 +54,8 @@
     this.raw = {};
 
     if (options) this.set(options);
+    this.is.fresh = true;
+
     this.init(options);
   };
 
@@ -108,6 +110,7 @@
           function () { return coerce(this.raw[name], options.type); } : null) ||
         function () { return this.raw[name]; },
       set: function (value) {
+        this.is.fresh = false;
         if (options.set) {
           options.set.call(this, value);
           this.trigger('change:'+name, value);
@@ -202,7 +205,10 @@
 
   Objekt.extend = require('./lib/extend')(_);
 
-  Objekt.prototype = {
+  Objekt.use(Ento.events);
+
+  Objekt.use({
+
     /**
      * init:
      * Sorta constructor. Override this.
@@ -243,8 +249,7 @@
       this.raw[key] = value;
       this.trigger('change:'+key, value);
     }
-  };
-
+  });
 
   function camelize (str) {
     return str.trim().replace(/[-_\s]+(.)?/g, function (match, c) { return c.toUpperCase(); });
@@ -283,8 +288,6 @@
       }
     }
   }
-
-  Objekt.use(Ento.events);
 
   return Ento;
 
