@@ -5,14 +5,22 @@ describe 'Tests', ->
     expect(ostruct.events).be.a 'object'
 
   it 'basic use case with api', ->
-    @Book = ostruct()
     @api = { sync: -> }
-    @book = new @Book(@api, title: "Hello")
-    expect(@book.title).eq "Hello"
+    Book = ostruct()
+    item = new Book(@api, title: "Hello")
+    expect(item.title).eq "Hello"
 
   it 'basic use case without api', ->
-    @Book = ostruct()
-    @book = new @Book(title: "Hello")
-    expect(@book.title).eq "Hello"
+    Book = ostruct()
+    item = new Book(title: "Hello")
+    expect(item.title).eq "Hello"
+  
+  it 'attributes', ->
+    Book = ostruct()
+      .attr('title')
+    item = new Book()
+
+    item.title = 'hi'
+    expect(item.title).eq 'hi'
 
 
