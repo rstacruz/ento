@@ -6,4 +6,4 @@ before ->
   global.expect = chai.expect
 
 before ->
-  global.ostruct = require('../index')
+  global.ostruct = require('../dist/ostruct.js')
