@@ -33,7 +33,7 @@
   Resource = function () {
     var api, options;
 
-    // determine stuff
+    // determine the params (api, options)
     for (var i=0, len=arguments.length; i<len; i++) {
       if (i === 0 && arguments[0] && arguments[0].sync) {
         api = arguments[0];
@@ -42,6 +42,7 @@
       }
     }
 
+    /** is: states */
     this.is = { fresh: true };
 
     /** api: Root instance */
@@ -166,18 +167,53 @@
   };
 
   /**
-   * use : use(object, [...])
-   * yep.
+   * use : use(...)
+   * uses a mixin.
+   *
+   * ~ use(props, [staticProps]) :
+   *   extends the prototype with `props`. optionally, you can pass
+   *   `staticProps` too to extend the object itself.
+   * ~ use(fn) :
+   *   call the function `fn`, passing the model as the first argument. This
+   *   allows you to extend the class in whatever way you wish.
+   *
+   * Example:
+   *
+   *     var Person = ostruct()
+   *       .attr('name')
+   *       .use({
+   *         greet: function() {
+   *           alert("Hello, " + this.name);
+   *         }
+   *       })
+   *
+   * Or as a function:
+   *
+   *     var Timestamps = function (model) {
+   *       model
+   *         .attr('createdAt')
+   *         .attr('updatedAt');
+   *     }
+   *
+   *     var Record = ostruct().use(Timestamps);
    */
 
-  Resource.use = function () {
-    for (var i=0, len=arguments.length; i<len; i++) {
-      var props = arguments[i];
+  Resource.use = function (props, staticProps) {
+    if (typeof props === 'function') {
+      props.call(this, this);
+    }
+    else if (typeof props === 'object') {
       _.extend(this.prototype, props);
     }
+    if (typeof staticProps === 'object') {
+      _.extend(this, staticProps);
+    }
+
+    return this;
   };
 
   /**
+   * extend : extend(props)
    * Subclasses `Resource` into a new class.
    */
 
