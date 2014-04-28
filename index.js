@@ -109,7 +109,7 @@
 
     this.properties.push(name);
 
-    Object.defineProperty(this.prototype, name, {
+    var props = {
       enumerable: true,
       get: function () {
         return this.raw[name];
@@ -118,7 +118,17 @@
         this.raw[name] = value;
         this.trigger('change:'+name, value);
       }
-    });
+    };
+
+    var names = _.uniq([
+      name,
+      camelize(name),
+      underscored(name)
+    ]);
+
+    for (var i=0, len=names.length; i<len; i++) {
+      Object.defineProperty(this.prototype, names[i], props);
+    }
 
     return this;
   };
@@ -131,6 +141,10 @@
 
   function camelize (str) {
     return str.trim().replace(/[-_\s]+(.)?/g, function (match, c) { return c.toUpperCase(); });
+  }
+
+  function underscored (str) {
+    return str.trim().replace(/([a-z\d])([A-Z]+)/g, '$1_$2').replace(/[\.-\s]+/g, '_').toLowerCase();
   }
 
   _.extend(Resource.prototype, Ostruct.events);

@@ -37,6 +37,7 @@ describe 'Tests', ->
     beforeEach ->
       Book = ostruct()
         .attr('title')
+        .attr('in_stock')
       item = new Book()
 
     it 'has raw', ->
@@ -62,10 +63,10 @@ describe 'Tests', ->
       expect(item.raw.title).eq 'hi'
 
     it 'adds to properties', ->
-      expect(item.constructor.properties).be.like ['title']
+      expect(item.constructor.properties).be.like ['title', 'in_stock']
 
     it 'adds to properties, 2', ->
-      expect(Book.properties).be.like ['title']
+      expect(Book.properties).be.like ['title', 'in_stock']
 
     it 'triggers a change:title event', (done) ->
       item.on 'change:title', (val) ->
@@ -73,3 +74,19 @@ describe 'Tests', ->
         done()
 
       item.title = 'hi'
+
+    it 'camelcase setter', ->
+      item.inStock = true
+      expect(item.in_stock).eq true
+
+    it 'underscored setter', ->
+      item.in_stock = true
+      expect(item.inStock).eq true
+
+    it 'camelcase .set()', ->
+      item.set inStock: true
+      expect(item.in_stock).eq true
+
+    it 'underscored .set()', ->
+      item.set in_stock: true
+      expect(item.inStock).eq true
