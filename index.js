@@ -5,7 +5,7 @@
   } else if (typeof exports === 'object') {
     module.exports = factory(underscore()); /* CommonJS */
   } else {
-    root.Struct = factory(underscore()); /* Globals */
+    root.Ostruct = factory(underscore()); /* Globals */
   }
 
   function underscore() {
@@ -15,12 +15,14 @@
 
 }(this, function (_) {
 
-  if (!_) throw new Error("Struct: underscore.js not found.");
+  if (!_) throw new Error("Ostruct: underscore.js not found.");
 
-  // Create local references to array methods we'll want to use later.
-  var array = [];
-  var push = array.push;
-  var slice = array.slice;
+  var Resource;
+
+  function Ostruct() {
+    return Resource.extend();
+  }
+
 
   /**
    * A remote resource.
@@ -52,7 +54,7 @@
    *     });
    */
 
-  var Resource = module.exports = function () {
+  Resource = function () {
     var api, options;
 
     for (var i=0, len=arguments.length; i<len; i++) {
@@ -85,10 +87,32 @@
     init: function (options) {
     },
 
-    endpoint: function () {
-      return { get: '/api/trips' };
-    },
+    /**
+     * set : set(key, value)
+     * Sets a `key` to `value`. If a setter function is available, use it.
+     */
 
+    set: function (key, value) {
+      if (arguments.length === 1 && typeof key === 'object') {
+        for (var k in key) {
+          if (key.hasOwnProperty(k)) this.set(k, key[k]);
+        }
+        return;
+      }
+
+      var fnName = camelize("set_"+key);
+      if (this[fnName])
+        return this[fnName](value);
+      else
+        this[key] = value;
+    }
+  };
+
+  /**
+   * Persistence mixin
+   */
+
+  Ostruct.persistence = {
     /** itemClass: the class of each item */
     itemClass: null,
 
@@ -181,26 +205,6 @@
     },
 
     /**
-     * set : set(key, value)
-     * Sets a `key` to `value`. If a setter function is available, use it.
-     */
-
-    set: function (key, value) {
-      if (arguments.length === 1 && typeof key === 'object') {
-        for (var k in key) {
-          if (key.hasOwnProperty(k)) this.set(k, key[k]);
-        }
-        return;
-      }
-
-      var fnName = camelize("set_"+key);
-      if (this[fnName])
-        return this[fnName](value);
-      else
-        this[key] = value;
-    },
-
-    /**
      * Removes data and returns it to the fresh state.
      * TODO: test
      */
@@ -236,14 +240,10 @@
     return str.trim().replace(/[-_\s]+(.)?/g, function (match, c) { return c.toUpperCase(); });
   }
 
-  function Struct() {
-    return Resource.extend();
-  }
+  Ostruct.events = require('./lib/events')(_);
+  _.extend(Resource.prototype, Ostruct.events);
+  Ostruct.object = Resource;
 
-  Struct.events = require('./lib/events')(_);
-  _.extend(Resource.prototype, Struct.events);
-  Struct.object = Resource;
-
-  return Struct;
+  return Ostruct;
 
 }));

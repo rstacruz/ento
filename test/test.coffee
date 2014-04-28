@@ -2,16 +2,16 @@ describe 'Tests', ->
   require('./setup')()
 
   it 'has events', ->
-    expect(Struct.events).be.a 'object'
+    expect(ostruct.events).be.a 'object'
 
   it 'basic use case with api', ->
-    @Book = Struct()
+    @Book = ostruct()
     @api = { sync: -> }
     @book = new @Book(@api, title: "Hello")
     expect(@book.title).eq "Hello"
 
   it 'basic use case without api', ->
-    @Book = Struct()
+    @Book = ostruct()
     @book = new @Book(title: "Hello")
     expect(@book.title).eq "Hello"
 

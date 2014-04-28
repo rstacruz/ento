@@ -1,4 +1,4 @@
-# Struct.js
+# ostruct.js
 
 Yet another model library.
 
@@ -24,15 +24,13 @@ API is made to be as simple as possible.
 
 ### Basic usage
 
-Running *Struct()* makes a new class.
+Running *ostruct()* makes a new class, which you can instanciate.
 
 ```js
-var Album = Struct();
-```
+var ostruct = require('ostruct');
 
-With you can instanciate.
+var Album = ostruct();
 
-```js
 var album = new Album({
   title: "Splenenie",
   artist: "Maciej Tubis",
@@ -47,7 +45,7 @@ console.log(album.year);
 *use()* adds to the prototype.
 
 ```js
-var Person = Struct()
+var Person = ostruct()
   .use({
       greet: function() {
         alert("Hi, " + this.name);
@@ -64,13 +62,13 @@ me.greet();
 Chaining, awesome.
 
 ```js
-var Person = Struct()
+var Person = ostruct()
   .prop('firstName')
   .prop('lastName')
   .prop('age', Number)
   .prop('birthday', Date)
   .prop('fullName', function () { return /*...*/; })
-  .use(Struct.validations)
+  .use(ostruct.validations)
   .use({
     // instance methods here
   });
@@ -79,11 +77,9 @@ var Person = Struct()
 ### Dynamic attrs
 
 ```js
-var User = Struct()
-  .prop('fullName', {
-    get: function () {
+var User = ostruct()
+  .prop('fullName', function () {
       return this.firstName + ' ' + this.lastName;
-    }
   });
 
 var me = new User({ firstName: 'John', lastName: 'Coltrane' });
@@ -93,7 +89,7 @@ me.fullName == 'John Coltrane';
 ### Simple setters and getters
 
 ```js
-var Book = Struct()
+var Book = ostruct()
   .attr('genre');
 
 book.genre = 'fiction';
@@ -119,7 +115,7 @@ book.is.error
 ### Collections
 
 ```js
-Books = Struct.list()
+Books = ostruct.list()
 books = new Books([ {...}, {...} ])
 books.items
 books.each(...)
@@ -128,7 +124,7 @@ books.each(...)
 ### CoffeeScript support
 
 ```coffee
-class Book extends Struct.object
+class Book extends ostruct.object
   @attr 'title'
   @attr 'genre'
 

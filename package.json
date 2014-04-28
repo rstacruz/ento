@@ -1,5 +1,5 @@
 {
-  "name": "struct",
+  "name": "ostruct",
   "version": "0.0.0",
   "description": "orm",
   "main": "index.js",
