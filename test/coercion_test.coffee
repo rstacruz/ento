@@ -22,7 +22,7 @@ describe 'attribute coercion', ->
     Book = ostruct()
       .attr('available', Boolean)
 
-    item = new Book(available: 'yeah')
+    item = new Book(available: 'yes')
     expect(item.available).be.eql true
 
   it 'boolean, false', ->
@@ -32,6 +32,12 @@ describe 'attribute coercion', ->
     item = new Book(available: '')
     expect(item.available).be.eql false
 
+  it 'boolean, undefined', ->
+    Book = ostruct()
+      .attr('available', Boolean)
+
+    item = new Book(available: 'wtf')
+    expect(item.available).be.eql undefined
   it 'date', ->
     Book = ostruct()
       .attr('publishedAt', Date)
