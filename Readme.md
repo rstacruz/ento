@@ -1,6 +1,7 @@
 # ento.js
 
-Yet another model library. WIP.
+Simple, stateful, observable objects in JavaScript. Essentially, yet another 
+model library. Work-in-progress.
 
 - __Simple attributes__:
 No need for methods to get/set values (ie, *.get()* and *.set()*).  ECMAScript 
@@ -45,7 +46,7 @@ var album = new Album({
 console.log(album.year);
 ```
 
-### Defining attributes
+### Attributes
 
 Use *attr()* to define properties. This will enable features on those properties 
 such as change tracking, type coercion, and more.
@@ -67,6 +68,26 @@ var me = new Person({ firstName: "Frank", lastName: "Sinatra" });
 me.birthday = "1915-12-02T12:00:00Z";
 ```
 
+Use attributes just like you would without Ento. No fancy syntax here.
+
+```js
+var Book = Ento()
+  .attr('genre');
+
+book = new Book();
+book.genre = 'fiction';
+book.genre; //=> 'fiction'
+```
+
+Non-explicit attributes also work, but they will not be tracked for changes.
+
+```js
+Book = Ento();
+book = new Book();
+
+book.isbn = "00123";
+```
+
 ### Methods
 
 *use()* adds to the prototype.
@@ -81,18 +102,6 @@ var Person = Ento()
 
 var me = new User({ name: "Miles Davis" });
 me.greet();
-```
-
-### Simple attributes
-
-No fancy syntax here.
-
-```js
-var Book = Ento()
-  .attr('genre');
-
-book.genre = 'fiction';
-book.genre; //=> 'fiction'
 ```
 
 ### Dynamic attrs
@@ -169,3 +178,9 @@ class Book extends Ento.object
   burn: ->
     ...
 ```
+
+## Acknowledgements
+
+Contains code from Backbone.js.
+
+> Backbone's MIT license goes here

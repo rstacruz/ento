@@ -1,7 +1,7 @@
 {
   "name": "ento",
   "version": "0.0.0",
-  "description": "orm",
+  "description": "Simple, stateful, observable objects in JavaScript.",
   "main": "index.js",
   "scripts": {
     "test": "mocha"

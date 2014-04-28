@@ -5,7 +5,7 @@
   "authors": [
     "Rico Sta. Cruz <hi@ricostacruz.com>"
   ],
-  "description": "model",
+  "description": "Simple, stateful, observable objects in JavaScript.",
   "moduleType": [
     "amd",
     "globals",
