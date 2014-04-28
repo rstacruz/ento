@@ -9,7 +9,7 @@ describe 'export', ->
 
     data = new Book(title: 'T', author: 'A').export()
 
-    expect(data).be.like { title: 'T', author: 'A' }
+    expect(data).be.like { title: 'T', author: 'A', is: { fresh: true } }
 
   it 'hide non-enumerables', ->
     Book = ento()
@@ -19,7 +19,8 @@ describe 'export', ->
 
     data = new Book(title: 'T', author: 'A').export()
 
-    expect(data).be.like { title: 'T' }
+    expect(data.title).eql 'T'
+    expect(data.author).be.undefined
 
   it 'hide non-exportables', ->
     Book = ento()
@@ -29,5 +30,5 @@ describe 'export', ->
 
     data = new Book(title: 'T', author: 'A').export()
 
-    expect(data).be.like { title: 'T' }
-
+    expect(data.title).eql 'T'
+    expect(data.author).be.undefined
