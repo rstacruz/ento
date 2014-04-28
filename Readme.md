@@ -47,9 +47,8 @@ console.log(album.year);
 ```js
 var Person = ostruct()
   .use({
-      greet: function() {
-        alert("Hi, " + this.name);
-      }
+    greet: function() {
+      alert("Hi, " + this.name);
     }
   });
 
@@ -74,11 +73,23 @@ var Person = ostruct()
   });
 ```
 
+### Simple attributes
+
+No fancy syntax here.
+
+```js
+var Book = ostruct()
+  .attr('genre');
+
+book.genre = 'fiction';
+book.genre; //=> 'fiction'
+```
+
 ### Dynamic attrs
 
 ```js
 var User = ostruct()
-  .prop('fullName', function () {
+  .attr('fullName', function () {
       return this.firstName + ' ' + this.lastName;
   });
 
@@ -86,14 +97,26 @@ var me = new User({ firstName: 'John', lastName: 'Coltrane' });
 me.fullName == 'John Coltrane';
 ```
 
-### Simple setters and getters
+### Underscore and camelcase normalization
+
+Both camelcase and underscores are available for attributes. This reconciles a 
+common problem of having the backend (eg, Rails) have underscored conventions, 
+       while .js files tend to have camelCase conventions.
 
 ```js
-var Book = ostruct()
-  .attr('genre');
+var User = ostruct()
+  .attr('firstName')
+  .attr('lastName');
 
-book.genre = 'fiction';
-book.genre; // === 'fiction'
+var me = new User({
+  firstName: 'Dexter',
+  last_name: 'Morgan'
+});
+
+me.first_name = "Dexter";
+
+me.first_name; //=> "Dexter"
+me.firstName;  //=> "Dexter"
 ```
 
 ### Method set
