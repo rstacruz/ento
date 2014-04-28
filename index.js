@@ -25,6 +25,7 @@
 
   Ento.events = require('./lib/events')(_);
   Ento.persistence = require('./lib/persistence');
+  Ento.exportable = require('./lib/exportable');
 
   /**
    * Objekt.
@@ -219,7 +220,10 @@
    */
 
   Objekt.use = function (props, staticProps) {
-    if (typeof props === 'function') {
+    if (!props && arguments.length === 1) {
+      throw new Error("ento.use: invalid arguments");
+    }
+    else if (typeof props === 'function') {
       props.call(this, this);
     }
     else if (typeof props === 'object') {

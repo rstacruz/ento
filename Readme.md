@@ -72,7 +72,7 @@ var Person = Ento()
   .prop('age', Number)
   .prop('birthday', Date)
   .prop('fullName', function () { return /*...*/; })
-  .use(ento.validations)
+  .use(Ento.exportable)
   .use({
     // instance methods here
   });
