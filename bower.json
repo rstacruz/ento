@@ -1,0 +1,27 @@
+{
+  "name": "ostruct",
+  "main": "dist/ostruct.js",
+  "version": "0.0.0",
+  "authors": [
+    "Rico Sta. Cruz <hi@ricostacruz.com>"
+  ],
+  "description": "model",
+  "moduleType": [
+    "amd",
+    "globals",
+    "node"
+  ],
+  "keywords": [
+    "model",
+    "activerecord",
+    "orm"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
