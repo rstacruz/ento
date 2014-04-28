@@ -100,22 +100,36 @@
    *
    *     attr('name')
    *     attr('name', function())
+   *     attr('name', function(), function())
    *     attr('name', String|Boolean|Date|Number)
    *     attr('name', { options })
    */
 
   Resource.attr = function (name) {
+    // parse arguments into options
     var options = {};
+    for (var i=1, len=arguments.length; i<len; i++) {
+      var arg = arguments[i];
+      if (typeof arg === 'object') {
+        _.extend(options, arg);
+      } else if (arg === Number || arg === String || arg === Date || arg === Boolean) {
+        options.type = arg;
+      } else if (typeof arg === 'function') {
+        if (!options.get) options.get = arg;
+        else if (!options.set) options.set = arg;
+      }
+    }
 
     this.properties.push(name);
 
     var props = {
       enumerable: true,
-      get: function () {
+      get: options.get || function () {
         return this.raw[name];
       },
       set: function (value) {
-        this.raw[name] = value;
+        if (options.set) options.set.call(this, value);
+        else this.raw[name] = value;
         this.trigger('change:'+name, value);
       }
     };
