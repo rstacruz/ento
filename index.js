@@ -17,20 +17,20 @@
 
   if (!_) throw new Error("Ostruct: underscore.js not found.");
 
-  var Resource;
+  var Objekt;
 
   function Ostruct() {
-    return Resource.extend();
+    return Objekt.extend();
   }
 
   Ostruct.events = require('./lib/events')(_);
   Ostruct.persistence = require('./lib/persistence');
 
   /**
-   * Resource.
+   * Objekt.
    */
 
-  Resource = function () {
+  Objekt = function () {
     var api, options;
 
     // determine the params (api, options)
@@ -55,7 +55,7 @@
     this.init(options);
   };
 
-  Resource.prototype = {
+  Objekt.prototype = {
     /**
      * Sorta constructor
      */
@@ -97,7 +97,7 @@
     }
   };
 
-  Resource.extended = function () {
+  Objekt.extended = function () {
     /**
      * properties : Array
      * List of properties.
@@ -106,7 +106,7 @@
     this.properties = {};
   };
 
-  Resource.extended();
+  Objekt.extended();
 
   /**
    * attr : attr(name, [...])
@@ -121,7 +121,7 @@
    *     attr('name', { options })
    */
 
-  Resource.attr = function (name) {
+  Objekt.attr = function (name) {
     // parse arguments into options
     var options = {};
     for (var i=1, len=arguments.length; i<len; i++) {
@@ -182,7 +182,7 @@
    *    => ['first', 'last']
    */
 
-  Resource.propertyNames = function () {
+  Objekt.propertyNames = function () {
     return _.keys(this.properties);
   };
 
@@ -218,7 +218,7 @@
    *     var Record = ostruct().use(Timestamps);
    */
 
-  Resource.use = function (props, staticProps) {
+  Objekt.use = function (props, staticProps) {
     if (typeof props === 'function') {
       props.call(this, this);
     }
@@ -234,10 +234,10 @@
 
   /**
    * extend : extend(props)
-   * Subclasses `Resource` into a new class.
+   * Subclasses `Objekt` into a new class.
    */
 
-  Resource.extend = require('./lib/extend')(_);
+  Objekt.extend = require('./lib/extend')(_);
 
   function camelize (str) {
     return str.trim().replace(/[-_\s]+(.)?/g, function (match, c) { return c.toUpperCase(); });
@@ -277,8 +277,8 @@
     }
   }
 
-  _.extend(Resource.prototype, Ostruct.events);
-  Ostruct.object = Resource;
+  _.extend(Objekt.prototype, Ostruct.events);
+  Ostruct.object = Objekt;
 
   return Ostruct;
 
