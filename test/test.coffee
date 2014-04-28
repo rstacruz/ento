@@ -18,7 +18,7 @@ describe 'Tests', ->
       Book = ostruct()
       item = new Book(title: "Hello")
       expect(item.title).eq "Hello"
-    
+
   describe 'set', ->
     it 'mass set', ->
       Book = ostruct()
@@ -97,4 +97,3 @@ describe 'Tests', ->
     it 'underscored .set()', ->
       item.set in_stock: true
       expect(item.inStock).eq true
-

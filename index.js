@@ -143,9 +143,10 @@
 
     var props = {
       enumerable: options.enumerable,
-      get: options.get || function () {
-        return this.raw[name];
-      },
+      get: options.get ||
+        (options.type ?
+          function () { return coerce(this.raw[name], options.type); } : null) ||
+        function () { return this.raw[name]; },
       set: function (value) {
         if (options.set) {
           options.set.call(this, value);
@@ -244,6 +245,13 @@
 
   function underscored (str) {
     return str.trim().replace(/([a-z\d])([A-Z]+)/g, '$1_$2').replace(/[\.-\s]+/g, '_').toLowerCase();
+  }
+
+  function coerce (value, type) {
+    if (type === String) return "" + value;
+    if (type === Number) return +value;
+    if (type === Boolean) return (!!value);
+    if (type === Date) return new Date(value);
   }
 
   _.extend(Resource.prototype, Ostruct.events);
