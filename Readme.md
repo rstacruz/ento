@@ -1,6 +1,6 @@
 # ento.js
 
-*Re*active *struct* - yet another model library. WIP.
+Yet another model library. WIP.
 
 - __Simple attributes__:
 No need for methods to get/set values (ie, *.get()* and *.set()*).  ECMAScript 
@@ -18,6 +18,9 @@ need it.
 - __Browser, or Node.js__:
 Reuse the same business code in your client-side libs and your server-side libs.
 
+"[Ento](https://en.wiktionary.org/wiki/Special:Search?search=ento&go=Look+up)" 
+is the Esperanto transation of the word "entity."
+
 ## API
 
 API is made to be as simple as possible.
@@ -27,10 +30,12 @@ API is made to be as simple as possible.
 Running *ento()* makes a new class, which you can instanciate.
 
 ```js
-var ento = require('ento');
+var Ento = require('ento');
 
-var Album = ento();
+// create a class
+var Album = Ento();
 
+// and instanciate it
 var album = new Album({
   title: "Splenenie",
   artist: "Maciej Tubis",
@@ -45,7 +50,7 @@ console.log(album.year);
 *use()* adds to the prototype.
 
 ```js
-var Person = ento()
+var Person = Ento()
   .use({
     greet: function() {
       alert("Hi, " + this.name);
@@ -61,7 +66,7 @@ me.greet();
 Chaining, awesome.
 
 ```js
-var Person = ento()
+var Person = Ento()
   .prop('firstName')
   .prop('lastName')
   .prop('age', Number)
@@ -78,7 +83,7 @@ var Person = ento()
 No fancy syntax here.
 
 ```js
-var Book = ento()
+var Book = Ento()
   .attr('genre');
 
 book.genre = 'fiction';
@@ -88,7 +93,7 @@ book.genre; //=> 'fiction'
 ### Dynamic attrs
 
 ```js
-var User = ento()
+var User = Ento()
   .attr('fullName', function () {
       return this.firstName + ' ' + this.lastName;
   });
@@ -104,7 +109,7 @@ common problem of having the backend (eg, Rails) have underscored conventions,
        while .js files tend to have camelCase conventions.
 
 ```js
-var User = ento()
+var User = Ento()
   .attr('firstName')
   .attr('lastName');
 
@@ -138,7 +143,7 @@ book.is.error
 ### Collections
 
 ```js
-Books = ento.list()
+Books = Ento.list()
 books = new Books([ {...}, {...} ])
 books.items
 books.each(...)
@@ -147,7 +152,7 @@ books.each(...)
 ### CoffeeScript support
 
 ```coffee
-class Book extends ento.object
+class Book extends Ento.object
   @attr 'title'
   @attr 'genre'
 
