@@ -48,7 +48,7 @@ describe 'Tests', ->
       expect(item.title).eq 'hi'
 
     it "doesn't propagate to global", ->
-      expect(ostruct.object.properties).be.like []
+      expect(ostruct.object.properties).be.like {}
 
     it 'sets raw', ->
       item.title = 'hi'
@@ -63,10 +63,13 @@ describe 'Tests', ->
       expect(item.raw.title).eq 'hi'
 
     it 'adds to properties', ->
-      expect(item.constructor.properties).be.like ['title', 'in_stock']
+      expect(item.constructor.properties).be.like { title:{}, in_stock: {} }
 
     it 'adds to properties, 2', ->
-      expect(Book.properties).be.like ['title', 'in_stock']
+      expect(Book.properties).be.like { title:{}, in_stock: {} }
+
+    it 'propertyNames', ->
+      expect(Book.propertyNames()).be.like ['title', 'in_stock']
 
     it 'triggers a change:title event', (done) ->
       item.on 'change:title', (val) ->

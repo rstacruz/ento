@@ -103,7 +103,7 @@
      * List of properties.
      */
 
-    this.properties = [];
+    this.properties = {};
   };
 
   Resource.extended();
@@ -136,7 +136,7 @@
       }
     }
 
-    this.properties.push(name);
+    this.properties[name] = options;
 
     var props = {
       enumerable: true,
@@ -164,6 +164,22 @@
     }
 
     return this;
+  };
+
+  /**
+   * propertyNames:
+   * returns property names.
+   *
+   *     Name = ostruct()
+   *       .attr('first')
+   *       .attr('last');
+   *
+   *    Name.propertyNames();
+   *    => ['first', 'last']
+   */
+
+  Resource.propertyNames = function () {
+    return _.keys(this.properties);
   };
 
   /**
