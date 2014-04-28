@@ -254,10 +254,11 @@
    *     coerce("200", Number);   => 200
    *     coerce(200, String);     => "200"
    *     coerce("yes", Boolean);  => true
-   *
    */
 
   function coerce (value, type) {
+    if (value === null || typeof value === 'undefined') return value;
+
     if (type === String) return "" + value;
     if (type === Number) return +value;
     if (type === Date) return new Date(value);

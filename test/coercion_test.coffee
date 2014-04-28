@@ -11,6 +11,20 @@ describe 'attribute coercion', ->
     item = new Book(title: 300)
     expect(item.title).be.eql "300"
 
+  it 'undefined', ->
+    Book = ostruct()
+      .attr('title', String)
+
+    item = new Book()
+    expect(item.title).be.undefined
+
+  it 'undefined', ->
+    Book = ostruct()
+      .attr('title', String)
+
+    item = new Book(title: null)
+    expect(item.title).be.null
+
   it 'number', ->
     Book = ostruct()
       .attr('pages', Number)
@@ -38,6 +52,7 @@ describe 'attribute coercion', ->
 
     item = new Book(available: 'wtf')
     expect(item.available).be.eql undefined
+
   it 'date', ->
     Book = ostruct()
       .attr('publishedAt', Date)
