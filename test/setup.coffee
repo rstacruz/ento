@@ -6,4 +6,7 @@ before ->
   global.expect = chai.expect
 
 before ->
-  global.ostruct = require('../dist/ostruct.js')
+  if process.env.distfile?
+    global.ostruct = require('../' + process.env.distfile)
+  else
+    global.ostruct = require('../index.js')

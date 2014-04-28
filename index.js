@@ -277,7 +277,7 @@
     }
   }
 
-  _.extend(Objekt.prototype, Ostruct.events);
+  Objekt.use(Ostruct.events);
   Ostruct.object = Objekt;
 
   return Ostruct;

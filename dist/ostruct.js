@@ -23,7 +23,7 @@
     return Objekt.extend();
   }
 
-  Ostruct.events = ((function(){var module={exports:{}};(function(){var slice = [].slice;
+  Ostruct.events = ((function(){var module={exports:{}},exports=module.exports;(function(){var slice = [].slice;
 
 module.exports = function (_) {
   // Backbone.Events
@@ -191,7 +191,7 @@ module.exports = function (_) {
   return Events;
 };
 })();return module.exports;})())(_);
-  Ostruct.persistence = ((function(){var module={exports:{}};(function(){module.exports = {
+  Ostruct.persistence = ((function(){var module={exports:{}},exports=module.exports;(function(){module.exports = {
   /** itemClass: the class of each item */
   itemClass: null,
 
@@ -520,7 +520,7 @@ module.exports = function (_) {
    * Subclasses `Objekt` into a new class.
    */
 
-  Objekt.extend = ((function(){var module={exports:{}};(function(){module.exports = function (_) {
+  Objekt.extend = ((function(){var module={exports:{}},exports=module.exports;(function(){module.exports = function (_) {
   return function (protoProps, staticProps) {
     var parent = this;
     var child;
@@ -597,7 +597,7 @@ module.exports = function (_) {
     }
   }
 
-  _.extend(Objekt.prototype, Ostruct.events);
+  Objekt.use(Ostruct.events);
   Ostruct.object = Objekt;
 
   return Ostruct;
