@@ -1,10 +1,9 @@
+require './setup'
+
 Book = null
-Name = null
 item = null
 
 describe 'Tests', ->
-  require('./setup')()
-
   it 'has events', ->
     expect(ostruct.events).be.a 'object'
 
@@ -92,13 +91,3 @@ describe 'Tests', ->
       item.set in_stock: true
       expect(item.inStock).eq true
 
-  describe 'getter', ->
-    beforeEach ->
-      Name = ostruct()
-        .attr('first')
-        .attr('last')
-        .attr('full', -> "#{@first} #{@last}")
-
-    it 'works', ->
-      dude = new Name(first: 'Miles', last: 'Davis')
-      expect(dude.full).eq 'Miles Davis'

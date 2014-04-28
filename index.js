@@ -78,6 +78,21 @@
 
       // set raw; use the setter
       this[key] = value;
+    },
+
+    /**
+     * setRaw : setRaw(key, value, options)
+     * Sets the attribute `key` to the value of `value`. This is what dynamic
+     * setters delegate to.
+     *
+     * This also triggers the `change:xxx` event.
+     *
+     *     item.setRaw('name', 'John');
+     *
+     */
+    setRaw: function (key, value, options) {
+      this.raw[key] = value;
+      this.trigger('change:'+key, value);
     }
   };
 
@@ -128,9 +143,12 @@
         return this.raw[name];
       },
       set: function (value) {
-        if (options.set) options.set.call(this, value);
-        else this.raw[name] = value;
-        this.trigger('change:'+name, value);
+        if (options.set) {
+          options.set.call(this, value);
+          this.trigger('change:'+name, value);
+        } else {
+          this.setRaw(name, value);
+        }
       }
     };
 
@@ -145,6 +163,18 @@
     }
 
     return this;
+  };
+
+  /**
+   * use : use(object, [...])
+   * yep.
+   */
+
+  Resource.use = function () {
+    for (var i=0, len=arguments.length; i<len; i++) {
+      var props = arguments[i];
+      _.extend(this.prototype, props);
+    }
   };
 
   /**
