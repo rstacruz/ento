@@ -104,23 +104,27 @@ var me = new User({ name: "Miles Davis" });
 me.greet();
 ```
 
-### Dynamic attrs
+### Computed attributes
 
 ```js
-var User = Ento()
-  .attr('fullName', function () {
-      return this.firstName + ' ' + this.lastName;
+var Name = Ento()
+  .attr('fullname', function () {
+      return [this.first, this.last].join(' ');
   });
 
-var me = new User({ firstName: 'John', lastName: 'Coltrane' });
-me.fullName == 'John Coltrane';
+var me = new Name({
+  first: 'John',
+  last: 'Coltrane'
+});
+
+me.fullname; // => 'John Coltrane';
 ```
 
 ### Underscore and camelcase normalization
 
 Both camelcase and underscores are available for attributes. This reconciles a 
-common problem of having the backend (eg, Rails) have underscored conventions, 
-       while .js files tend to have camelCase conventions.
+common problem of having the backend (eg, Rails) have *underscored* conventions, 
+       while .js files tend to have *camelCase* conventions.
 
 ```js
 var User = Ento()
@@ -138,14 +142,37 @@ me.first_name; //=> "Dexter"
 me.firstName;  //=> "Dexter"
 ```
 
+### Change tracking
+
+Know when attributes change.
+
+```js
+var User = Ento()
+  .attr('firstName')
+  .attr('lastName');
+
+var me = new User();
+
+// when `firstName` changes
+me.on('change:firstName', function() { ... });
+
+// when anything changes
+me.on('change', function() { ... });
+
+// triggers the two events above
+me.firstName = "Jacques";
+```
+
 ### Method set
+
+Also works.
 
 ```js
 book.set('genre', 'fiction');
 book.set({ genre: 'fiction' });
 ```
 
-### States
+### States (to be implemented)
 
 ```js
 book.is.fresh    // hasn't been modified since instanciation
@@ -159,7 +186,7 @@ book.is.deleted  // has been deleted
 book.is.error    // persistence errors
 ```
 
-### Collections (not yet)
+### Collections (to be implemented)
 
 ```js
 Books = Ento.list()
