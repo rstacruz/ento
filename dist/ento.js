@@ -308,12 +308,42 @@ module.exports = function (_) {
   }
 };
 })();return module.exports;})());
+  Ento.exportable = ((function(){var module={exports:{}},exports=module.exports;(function(){module.exports = {
 
   /**
-   * Objekt.
+   * export : export()
+   * exports all attributes into an object, including dynamic properties.
    */
 
-  Objekt = function () {
+  export: function() {
+    var obj = {};
+    var props = this.constructor.properties;
+
+    // propagate properties
+    for (var prop in props) {
+      if (props.hasOwnProperty(prop)) {
+        var options = props[prop];
+        if (options.enumerable !== false && options.exportable !== false) {
+          obj[prop] = this[prop];
+        }
+      }
+    }
+
+    // propagate state
+    obj.is = this.is;
+
+    return obj;
+  }
+};
+
+})();return module.exports;})());
+
+  /**
+   * Object:
+   * An object class.
+   */
+
+  Ento.object = Objekt = function () {
     var api, options;
 
     // determine the params (api, options)
@@ -336,48 +366,6 @@ module.exports = function (_) {
 
     if (options) this.set(options);
     this.init(options);
-  };
-
-  Objekt.prototype = {
-    /**
-     * Sorta constructor
-     */
-
-    init: function (options) {
-    },
-
-    /**
-     * set : set(key, value)
-     * Sets a `key` to `value`. If a setter function is available, use it.
-     */
-
-    set: function (key, value) {
-      // handle objects (.set({...}))
-      if (arguments.length === 1 && typeof key === 'object') {
-        for (var k in key) {
-          if (key.hasOwnProperty(k)) this.set(k, key[k]);
-        }
-        return;
-      }
-
-      // set raw; use the setter
-      this[key] = value;
-    },
-
-    /**
-     * setRaw : setRaw(key, value, options)
-     * Sets the attribute `key` to the value of `value`. This is what dynamic
-     * setters delegate to.
-     *
-     * This also triggers the `change:xxx` event.
-     *
-     *     item.setRaw('name', 'John');
-     *
-     */
-    setRaw: function (key, value, options) {
-      this.raw[key] = value;
-      this.trigger('change:'+key, value);
-    }
   };
 
   Objekt.extended = function () {
@@ -502,7 +490,10 @@ module.exports = function (_) {
    */
 
   Objekt.use = function (props, staticProps) {
-    if (typeof props === 'function') {
+    if (!props && arguments.length === 1) {
+      throw new Error("ento.use: invalid arguments");
+    }
+    else if (typeof props === 'function') {
       props.call(this, this);
     }
     else if (typeof props === 'object') {
@@ -559,6 +550,50 @@ module.exports = function (_) {
 };
 })();return module.exports;})())(_);
 
+  Objekt.prototype = {
+    /**
+     * init:
+     * Sorta constructor. Override this.
+     */
+
+    init: function (options) {
+    },
+
+    /**
+     * set : set(key, value)
+     * Sets a `key` to `value`. If a setter function is available, use it.
+     */
+
+    set: function (key, value) {
+      // handle objects (.set({...}))
+      if (arguments.length === 1 && typeof key === 'object') {
+        for (var k in key) {
+          if (key.hasOwnProperty(k)) this.set(k, key[k]);
+        }
+        return;
+      }
+
+      // set raw; use the setter
+      this[key] = value;
+    },
+
+    /**
+     * setRaw : setRaw(key, value, options)
+     * Sets the attribute `key` to the value of `value`. This is what dynamic
+     * setters delegate to.
+     *
+     * This also triggers the `change:xxx` event.
+     *
+     *     item.setRaw('name', 'John');
+     *
+     */
+    setRaw: function (key, value, options) {
+      this.raw[key] = value;
+      this.trigger('change:'+key, value);
+    }
+  };
+
+
   function camelize (str) {
     return str.trim().replace(/[-_\s]+(.)?/g, function (match, c) { return c.toUpperCase(); });
   }
@@ -598,7 +633,6 @@ module.exports = function (_) {
   }
 
   Objekt.use(Ento.events);
-  Ento.object = Objekt;
 
   return Ento;
 
