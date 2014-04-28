@@ -47,6 +47,9 @@
     /** api: Root instance */
     this.api = api;
 
+    /** raw: raw data */
+    this.raw = {};
+
     if (options) this.set(options);
     this.init(options);
   };
@@ -80,7 +83,37 @@
     }
   };
 
+  /**
+   * properties : Array
+   * List of properties.
+   */
+  Resource.properties = [];
+
+  /**
+   * attr : attr(name, [...])
+   * Registers an attribute.
+   *
+   * Can be called as:
+   *
+   *     attr('name')
+   *     attr('name', function())
+   *     attr('name', String|Boolean|Date|Number)
+   *     attr('name', { options })
+   */
+
   Resource.attr = function (name) {
+    this.properties.push(name);
+
+    Object.defineProperty(this.prototype, name, {
+      enumerable: true,
+      get: function () {
+        return this.raw[name];
+      },
+      set: function (value) {
+        this.raw[name] = value;
+      }
+    });
+
     return this;
   };
 
