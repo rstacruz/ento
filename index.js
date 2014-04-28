@@ -5,7 +5,7 @@
   } else if (typeof exports === 'object') {
     module.exports = factory(underscore()); /* CommonJS */
   } else {
-    root.Resource = factory(underscore()); /* Globals */
+    root.Struct = factory(underscore()); /* Globals */
   }
 
   function underscore() {
@@ -15,7 +15,7 @@
 
 }(this, function (_) {
 
-  if (!_) throw new Error("Rsrc: underscore.js not found.");
+  if (!_) throw new Error("Struct: underscore.js not found.");
 
   // Create local references to array methods we'll want to use later.
   var array = [];
@@ -236,14 +236,14 @@
     return str.trim().replace(/[-_\s]+(.)?/g, function (match, c) { return c.toUpperCase(); });
   }
 
-  function Rsrc() {
+  function Struct() {
     return Resource.extend();
   }
 
-  Rsrc.events = require('./lib/events')(_);
-  _.extend(Resource.prototype, Rsrc.events);
-  Rsrc.object = Resource;
+  Struct.events = require('./lib/events')(_);
+  _.extend(Resource.prototype, Struct.events);
+  Struct.object = Resource;
 
-  return Rsrc;
+  return Struct;
 
 }));

@@ -1,4 +1,4 @@
-# resource.js
+# Struct.js
 
 Yet another model library.
 
@@ -24,10 +24,10 @@ API is made to be as simple as possible.
 
 ### Basic usage
 
-Running *resource()* makes a new class.
+Running *Struct()* makes a new class.
 
 ```js
-var Album = resource();
+var Album = Struct();
 ```
 
 With you can instanciate.
@@ -47,7 +47,7 @@ console.log(album.year);
 *use()* adds to the prototype.
 
 ```js
-var Person = resource()
+var Person = Struct()
   .use({
       greet: function() {
         alert("Hi, " + this.name);
@@ -64,13 +64,13 @@ me.greet();
 Chaining, awesome.
 
 ```js
-var Person = resource()
+var Person = Struct()
   .prop('firstName')
   .prop('lastName')
   .prop('age', Number)
   .prop('birthday', Date)
   .prop('fullName', function () { return /*...*/; })
-  .use(resource.validations)
+  .use(Struct.validations)
   .use({
     // instance methods here
   });
@@ -79,7 +79,7 @@ var Person = resource()
 ### Dynamic attrs
 
 ```js
-var User = resource()
+var User = Struct()
   .prop('fullName', {
     get: function () {
       return this.firstName + ' ' + this.lastName;
@@ -93,7 +93,7 @@ me.fullName == 'John Coltrane';
 ### Simple setters and getters
 
 ```js
-var Book = resource()
+var Book = Struct()
   .attr('genre');
 
 book.genre = 'fiction';
@@ -119,7 +119,7 @@ book.is.error
 ### Collections
 
 ```js
-Books = resource.list()
+Books = Struct.list()
 books = new Books([ {...}, {...} ])
 books.items
 books.each(...)
@@ -128,7 +128,7 @@ books.each(...)
 ### CoffeeScript support
 
 ```coffee
-class Book extends resource.object
+class Book extends Struct.object
   @attr 'title'
   @attr 'genre'
 

@@ -3,4 +3,4 @@ module.exports = ->
     global.expect = require('chai').expect
 
   before ->
-    global.Rsrc = require('../index')
+    global.Struct = require('../index')
