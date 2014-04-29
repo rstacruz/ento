@@ -102,6 +102,13 @@
    *     attr('name', function(), function())
    *     attr('name', String|Boolean|Date|Number)
    *     attr('name', { options })
+   *
+   * Possible options:
+   *
+   * ~ get: getter function
+   * ~ set: setter function
+   * ~ type: type to coerce to. can be String | Boolean | Date | Number
+   * ~ enumerable: shows up in keys. (default: true)
    */
 
   Objekt.attr = function (name) {
