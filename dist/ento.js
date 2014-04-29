@@ -438,6 +438,8 @@ module.exports = function (_) {
 
   Objekt.extended();
 
+  _.extend(Objekt, Ento.events);
+
   /**
    * attr : attr(name, [...])
    * Registers an attribute.
@@ -449,6 +451,14 @@ module.exports = function (_) {
    *     attr('name', function(), function())
    *     attr('name', String|Boolean|Date|Number)
    *     attr('name', { options })
+   *
+   * Possible options:
+   *
+   * ~ get: getter function
+   * ~ set: setter function
+   * ~ type: type to coerce to. can be String | Boolean | Date | Number
+   * ~ enumerable: shows up in keys. (default: true)
+   * ~ exportable: will it show up on export()? (default: true)
    */
 
   Objekt.attr = function (name) {
@@ -458,7 +468,7 @@ module.exports = function (_) {
       var arg = arguments[i];
       if (typeof arg === 'object') {
         _.extend(options, arg);
-      } else if (arg === Number || arg === String || arg === Date || arg === Boolean) {
+      } else if (~[Number, String, Date, Boolean].indexOf(arg)) {
         options.type = arg;
       } else if (typeof arg === 'function') {
         if (!options.get) options.get = arg;
@@ -469,33 +479,25 @@ module.exports = function (_) {
     if (typeof options.enumerable === 'undefined')
       options.enumerable = true;
 
+    if (!options.get && options.type)
+      options.get = function () { return coerce(this.raw[name], options.type); };
+
+    if (!options.get)
+      options.get = function () { return this.raw[name]; };
+
+    if (!options.set)
+      options.set = function (value) { this.raw[name] = value; };
+
+    // save options
     this.properties[name] = options;
 
-    var props = {
-      enumerable: options.enumerable,
-      get: options.get ||
-        (options.type ?
-          function () { return coerce(this.raw[name], options.type); } : null) ||
-        function () { return this.raw[name]; },
-      set: function (value) {
-        this.is.fresh = false;
-        if (options.set) {
-          options.set.call(this, value);
-          this.trigger('change:'+name, value);
-        } else {
-          this.setRaw(name, value);
-        }
-      }
-    };
-
-    var names = _.uniq([
-      name,
-      camelize(name),
-      underscored(name)
-    ]);
-
+    var names = _.uniq([ name, camelize(name), underscored(name) ]);
     for (var i=0, len=names.length; i<len; i++) {
-      Object.defineProperty(this.prototype, names[i], props);
+      Object.defineProperty(this.prototype, names[i], {
+        enumerable: options.enumerable,
+        get: options.get,
+        set: function (value) { this.set(name, value); }
+      });
     }
 
     return this;
@@ -630,19 +632,55 @@ module.exports = function (_) {
     /**
      * set : set(key, value)
      * Sets a `key` to `value`. If a setter function is available, use it.
+     *
+     *     .set({ title: 'House of Holes' });
+     *     .set('title', 'House of Holes');
      */
 
-    set: function (key, value) {
+    set: function (key, value, options) {
       // handle objects (.set({...}))
-      if (arguments.length === 1 && typeof key === 'object') {
+      if (typeof key === 'object') {
+        options = value || {};
+        options.nochange = true;
+
         for (var k in key) {
-          if (key.hasOwnProperty(k)) this.set(k, key[k]);
+          if (key.hasOwnProperty(k))
+            this.set(k, key[k], options);
         }
+        if (!options || !options.silent) {
+          this.triggerChange(key);
+        }
+
         return;
       }
 
       // set raw; use the setter
-      this[key] = value;
+      this.is.fresh = false;
+      var prop = this.constructor.properties[key];
+
+      if (prop && prop.set) prop.set.call(this, value);
+      else this[key] = value;
+
+      if (!options || !options.silent) {
+        this.trigger('change:'+key, value);
+        this.constructor.trigger('change:'+key, this, value);
+
+        if (!options || !options.nochange) {
+          var changes = {};
+          changes[key] = value;
+          this.triggerChange(changes);
+        }
+      }
+    },
+
+    /**
+     * triggerChange : triggerChange(changes)
+     * (internal) triggers a 'change' event
+     */
+
+    triggerChange: function (changes) {
+      this.trigger('change', changes);
+      this.constructor.trigger('change', this, changes);
     },
 
     /**
