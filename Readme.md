@@ -1,11 +1,15 @@
 # ento.js
 
-Simple, stateful, observable objects in JavaScript. Essentially, yet another 
-model library. Work-in-progress.
+Simple, stateful, observable objects in JavaScript. Yet another model library, 
+  but this one aims to make the API experience as close to *plain JavaScript 
+  objects* as possible.
 
-- __Simple attributes__:
+Work-in-progress.
+
+- __Plain attributes__:
 No need for methods to get/set values (ie, *.get()* and *.set()*).  ECMAScript 
-getters and setters are used.
+getters and setters are used to listen for behavior on setting/getting 
+attributes.
 
 - __Model states__:
 Keeps track of your model's state if it's fetching, or got an error. This is 
@@ -16,7 +20,7 @@ No persistence is built in. No AJAX, no SQL, no nothing. It makes no assumptions
 on how you want to sync your data, and allows you to implement it however you 
 need it.
 
-- __Browser, or Node.js__:
+- __Browser or Node.js__:
 Reuse the same business code in your client-side libs and your server-side libs.
 
 "[Ento](https://en.wiktionary.org/wiki/Special:Search?search=ento&go=Look+up)" 
@@ -95,13 +99,17 @@ book.isbn = "00123";
 ```js
 var Person = Ento()
   .use({
-    greet: function() {
-      alert("Hi, " + this.name);
+    introduce: function() {
+      alert("Hi, I'm " + this.name);
+    }
+    dance: function() {
+      alert("Whoa!");
     }
   });
 
 var me = new User({ name: "Miles Davis" });
-me.greet();
+me.introduce();
+me.dance();
 ```
 
 ### Computed attributes
