@@ -133,10 +133,8 @@
 
     var props = {
       enumerable: options.enumerable,
-      get: options.get ||
-        (options.type ?
-          function () { return coerce(this.raw[name], options.type); } : null) ||
-        function () { return this.raw[name]; },
+      type: options.type,
+      get: options.get,
       set: function (value) {
         this.is.fresh = false;
         if (options.set) {
@@ -147,6 +145,18 @@
         }
       }
     };
+
+    if (!props.get && props.type) {
+      props.get = function () {
+        return coerce(this.raw[name], props.type);
+      };
+    }
+
+    if (!props.get) {
+      props.get = function () {
+        return this.raw[name];
+      };
+    }
 
     var names = _.uniq([
       name,
