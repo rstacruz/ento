@@ -4,12 +4,19 @@ spy = null
 
 describe 'init', ->
   beforeEach ->
-    spy =
-      init: sinon.spy()
+    spy = sinon.spy()
 
   it 'fires event', ->
     Model = ento()
-      .on('init', spy.init)
+      .on('init', spy)
 
     new Model()
-    expect(spy.init).calledOnce
+    expect(spy).calledOnce
+
+  it 'runs .init', ->
+    Model = ento()
+      .use(init: spy)
+
+    new Model()
+    expect(spy).calledOnce
+    expect(spy.firstCall.thisValue.constructor).eql Model
