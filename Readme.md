@@ -26,6 +26,15 @@ Reuse the same business code in your client-side libs and your server-side libs.
 "[Ento](https://en.wiktionary.org/wiki/Special:Search?search=ento&go=Look+up)" 
 is the Esperanto transation of the word "entity."
 
+## What's it like?
+
+ * It's like [Ember].Object, except decoupled from any MVC library.
+ * It's like [Backbone].Model, but less emphasis on collections.
+ * It's like [Spine].Model, but with change tracking.
+ * It's like [Modella], but with collections. (You should probably try Modella, 
+     actually.)
+ * It's like all of the above, with simpler syntax.
+
 ## API
 
 API is made to be as simple as possible.
@@ -197,8 +206,11 @@ book.is.error    // persistence errors
 ### Collections (to be implemented)
 
 ```js
-Books = Ento.list()
-books = new Books([ {...}, {...} ])
+Books = Ento()
+  .use(Ento.collection);
+
+books = new Books();
+books.set([ {...}, {...} ]);
 books.items
 books.each(...)
 ```
@@ -219,3 +231,8 @@ class Book extends Ento.object
 Contains code from Backbone.js.
 
 > Backbone's MIT license goes here
+
+[Modella]: https://github.com/modella/modella
+[Ember]: http://emberjs.org
+[Backbone]: http://backbonejs.org
+[Spine]: http://spinejs.com
