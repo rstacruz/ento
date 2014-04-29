@@ -26,6 +26,8 @@ Reuse the same business code in your client-side libs and your server-side libs.
 "[Ento](https://en.wiktionary.org/wiki/Special:Search?search=ento&go=Look+up)" 
 is the Esperanto transation of the word "entity."
 
+[![Status](https://travis-ci.org/rstacruz/ento.svg?branch=master)](https://travis-ci.org/rstacruz/ento)
+
 ## What's it like?
 
  * It's like [Ember].Object, except decoupled from any MVC library.
