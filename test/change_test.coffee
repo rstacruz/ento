@@ -1,0 +1,3 @@
+require './setup'
+
+describe 'change', ->

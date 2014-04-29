@@ -4,10 +4,11 @@
   "description": "Simple, stateful, observable objects in JavaScript.",
   "main": "index.js",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "autotest": "mocha --watch -b -R min"
   },
   "author": "Rico Sta. Cruz <hi@ricostacruz.com>",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "underscore": "^1.6.0"
   },
