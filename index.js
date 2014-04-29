@@ -109,6 +109,7 @@
    * ~ set: setter function
    * ~ type: type to coerce to. can be String | Boolean | Date | Number
    * ~ enumerable: shows up in keys. (default: true)
+   * ~ exportable: will it show up on export()? (default: true)
    */
 
   Objekt.attr = function (name) {
@@ -118,7 +119,7 @@
       var arg = arguments[i];
       if (typeof arg === 'object') {
         _.extend(options, arg);
-      } else if (arg === Number || arg === String || arg === Date || arg === Boolean) {
+      } else if (~[Number, String, Date, Boolean].indexOf(arg)) {
         options.type = arg;
       } else if (typeof arg === 'function') {
         if (!options.get) options.get = arg;
@@ -129,43 +130,25 @@
     if (typeof options.enumerable === 'undefined')
       options.enumerable = true;
 
+    if (!options.get && options.type)
+      options.get = function () { return coerce(this.raw[name], options.type); };
+
+    if (!options.get)
+      options.get = function () { return this.raw[name]; };
+
+    if (!options.set)
+      options.set = function (value) { this.raw[name] = value; };
+
+    // save options
     this.properties[name] = options;
 
-    var props = {
-      enumerable: options.enumerable,
-      type: options.type,
-      get: options.get,
-      set: function (value) {
-        this.is.fresh = false;
-        if (options.set) {
-          options.set.call(this, value);
-          this.trigger('change:'+name, value);
-        } else {
-          this.setRaw(name, value);
-        }
-      }
-    };
-
-    if (!props.get && props.type) {
-      props.get = function () {
-        return coerce(this.raw[name], props.type);
-      };
-    }
-
-    if (!props.get) {
-      props.get = function () {
-        return this.raw[name];
-      };
-    }
-
-    var names = _.uniq([
-      name,
-      camelize(name),
-      underscored(name)
-    ]);
-
+    var names = _.uniq([ name, camelize(name), underscored(name) ]);
     for (var i=0, len=names.length; i<len; i++) {
-      Object.defineProperty(this.prototype, names[i], props);
+      Object.defineProperty(this.prototype, names[i], {
+        enumerable: options.enumerable,
+        get: options.get,
+        set: function (value) { this.set(name, value); }
+      });
     }
 
     return this;
@@ -275,7 +258,11 @@
       }
 
       // set raw; use the setter
-      this[key] = value;
+      this.is.fresh = false;
+      var prop = this.constructor.properties[key];
+      if (prop && prop.set) prop.set.call(this, value);
+      else this[key] = value;
+      this.trigger('change:'+key, value);
     },
 
     /**
