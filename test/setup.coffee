@@ -1,6 +1,7 @@
 before ->
   global.chai = require('chai')
   chai.use require('chai-fuzzy')
+  chai.use require('sinon-chai')
 
 before ->
   global.expect = chai.expect

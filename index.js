@@ -91,6 +91,8 @@
 
   Objekt.extended();
 
+  _.extend(Objekt, Ento.events);
+
   /**
    * attr : attr(name, [...])
    * Registers an attribute.
@@ -246,6 +248,9 @@
     /**
      * set : set(key, value)
      * Sets a `key` to `value`. If a setter function is available, use it.
+     *
+     *     .set({ title: 'House of Holes' });
+     *     .set('title', 'House of Holes');
      */
 
     set: function (key, value, options) {
@@ -254,15 +259,13 @@
         options = value || {};
         options.nochange = true;
 
-        var keys = [];
         for (var k in key) {
-          if (key.hasOwnProperty(k)) {
-            keys.push(k);
+          if (key.hasOwnProperty(k))
             this.set(k, key[k], options);
-          }
         }
-        if (!options || !options.silent)
-          this.trigger('change', keys);
+        if (!options || !options.silent) {
+          this.triggerChange(key);
+        }
 
         return;
       }
@@ -276,9 +279,24 @@
 
       if (!options || !options.silent) {
         this.trigger('change:'+key, value);
-        if (!options || !options.nochange)
-          this.trigger('change', [key]);
+        this.constructor.trigger('change:'+key, this, value);
+
+        if (!options || !options.nochange) {
+          var changes = {};
+          changes[key] = value;
+          this.triggerChange(changes);
+        }
       }
+    },
+
+    /**
+     * triggerChange : triggerChange(changes)
+     * (internal) triggers a 'change' event
+     */
+
+    triggerChange: function (changes) {
+      this.trigger('change', changes);
+      this.constructor.trigger('change', this, changes);
     },
 
     /**
