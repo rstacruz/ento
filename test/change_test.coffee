@@ -15,17 +15,41 @@ describe 'change', ->
     beforeEach ->
       Book = ento().attr('title')
       book = new Book()
-
-    it 'local events', ->
       book.on 'change:title', changeTitle
+      book.on 'change', change
+
+    it 'setter', ->
       book.title = 'x'
-
       expect(changeTitle.calledOnce).true
+      expect(change.calledOnce).true
 
-    it 'multiple events', ->
-      book.on 'change:title', changeTitle
+    it '.set()', ->
+      book.set 'title', 'x'
+      expect(changeTitle.calledOnce).true
+      expect(change.calledOnce).true
+
+    it '.set(object)', ->
+      book.set title:  'x'
+      expect(changeTitle.calledOnce).true
+      expect(change.calledOnce).true
+
+    it '.set(k, v, silent)', ->
+      book.set 'title', 'x', silent: true
+      expect(changeTitle.called).false
+      expect(change.called).false
+
+    it '.set(object, silent)', ->
+      book.set { title: 'x' }, silent: true
+      expect(changeTitle.called).false
+      expect(change.called).false
+
+    it 'multiple setters', ->
       book.title = 'x'
       book.title = 'y'
-      book.title = 'z'
+      expect(changeTitle.callCount).eq 2
 
-      expect(changeTitle.callCount).eq 3
+    it 'multiple .set()', ->
+      book.set 'title', 'x'
+      book.set 'title', 'y'
+      expect(changeTitle.callCount).eq 2
+      expect(change.callCount).eq 2

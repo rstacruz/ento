@@ -248,21 +248,37 @@
      * Sets a `key` to `value`. If a setter function is available, use it.
      */
 
-    set: function (key, value) {
+    set: function (key, value, options) {
       // handle objects (.set({...}))
-      if (arguments.length === 1 && typeof key === 'object') {
+      if (typeof key === 'object') {
+        options = value || {};
+        options.nochange = true;
+
+        var keys = [];
         for (var k in key) {
-          if (key.hasOwnProperty(k)) this.set(k, key[k]);
+          if (key.hasOwnProperty(k)) {
+            keys.push(k);
+            this.set(k, key[k], options);
+          }
         }
+        if (!options || !options.silent)
+          this.trigger('change', keys);
+
         return;
       }
 
       // set raw; use the setter
       this.is.fresh = false;
       var prop = this.constructor.properties[key];
+
       if (prop && prop.set) prop.set.call(this, value);
       else this[key] = value;
-      this.trigger('change:'+key, value);
+
+      if (!options || !options.silent) {
+        this.trigger('change:'+key, value);
+        if (!options || !options.nochange)
+          this.trigger('change', [key]);
+      }
     },
 
     /**
