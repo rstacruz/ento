@@ -57,8 +57,8 @@ describe 'attribute coercion', ->
     Book = ento()
       .attr('publishedAt', Date)
 
-    item = new Book(publishedAt: '2014/01/01')
-    expect(+item.publishedAt).to.eql 1388505600000
+    item = new Book(publishedAt: '2014/01/01Z')
+    expect(+item.publishedAt).to.eql 1388534400000
 
   it 'date 2', ->
     Person = ento()
