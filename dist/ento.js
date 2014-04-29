@@ -19,9 +19,62 @@
 
   var Objekt;
 
+  /*
+   * Ento
+   */
+
   function Ento() {
     return Objekt.extend();
   }
+
+  /*
+   * utilities
+   */
+
+  var coerce = ((function(){var module={exports:{}},exports=module.exports;(function(){/**
+ * coerce : coerce(value, type)
+ * (internal) coerces a `value` into a type `type`.
+ *
+ *     coerce("200", Number);   => 200
+ *     coerce(200, String);     => "200"
+ *     coerce("yes", Boolean);  => true
+ */
+
+module.exports = function (value, type) {
+  if (value === null || typeof value === 'undefined') return value;
+
+  if (type === String) return "" + value;
+  if (type === Number) return +value;
+  if (type === Date) return new Date(value);
+  if (type === Boolean) {
+    if (typeof value === 'string') {
+      value = value.toLowerCase();
+      if (value === '1' || value === 'yes' || value === 'true')
+        return true;
+      else if (value === '0' || value === 'no' || value === 'false' || value === '')
+        return false;
+    } else if (typeof value === 'number') {
+      return value !== 0;
+    } else {
+      return !!value;
+    }
+  }
+};
+})();return module.exports;})());
+  var stringUtils = ((function(){var module={exports:{}},exports=module.exports;(function(){exports.camelize = function (str) {
+  return str.trim().replace(/[-_\s]+(.)?/g, function (match, c) { return c.toUpperCase(); });
+};
+
+exports.underscored = function (str) {
+  return str.trim().replace(/([a-z\d])([A-Z]+)/g, '$1_$2').replace(/[\.-\s]+/g, '_').toLowerCase();
+};
+})();return module.exports;})());
+  var camelize = stringUtils.camelize;
+  var underscored = stringUtils.underscored;
+
+  /*
+   * etc
+   */
 
   Ento.events = ((function(){var module={exports:{}},exports=module.exports;(function(){var slice = [].slice;
 
@@ -338,9 +391,8 @@ module.exports = function (_) {
 
 })();return module.exports;})());
 
-  /**
-   * Object:
-   * An object class.
+  /*
+   * object
    */
 
   Ento.object = Objekt = function () {
@@ -355,18 +407,25 @@ module.exports = function (_) {
       }
     }
 
-    /** is: states */
-    this.is = { fresh: true };
+    /** states */
+    this.is = {};
 
-    /** api: Root instance */
+    /** Root instance */
     this.api = api;
 
-    /** raw: raw data */
+    /** raw data */
     this.raw = {};
 
     if (options) this.set(options);
+    this.is.fresh = true;
+
     this.init(options);
   };
+
+  /***
+   * Working with objects:
+   * so and so
+   */
 
   Objekt.extended = function () {
     /**
@@ -419,6 +478,7 @@ module.exports = function (_) {
           function () { return coerce(this.raw[name], options.type); } : null) ||
         function () { return this.raw[name]; },
       set: function (value) {
+        this.is.fresh = false;
         if (options.set) {
           options.set.call(this, value);
           this.trigger('change:'+name, value);
@@ -550,7 +610,15 @@ module.exports = function (_) {
 };
 })();return module.exports;})())(_);
 
-  Objekt.prototype = {
+  Objekt.use(Ento.events);
+
+  /***
+   * Working with instances:
+   * Here's how to work with instances.
+   */
+
+  Objekt.use({
+
     /**
      * init:
      * Sorta constructor. Override this.
@@ -591,48 +659,7 @@ module.exports = function (_) {
       this.raw[key] = value;
       this.trigger('change:'+key, value);
     }
-  };
-
-
-  function camelize (str) {
-    return str.trim().replace(/[-_\s]+(.)?/g, function (match, c) { return c.toUpperCase(); });
-  }
-
-  function underscored (str) {
-    return str.trim().replace(/([a-z\d])([A-Z]+)/g, '$1_$2').replace(/[\.-\s]+/g, '_').toLowerCase();
-  }
-
-  /**
-   * coerce : coerce(value, type)
-   * (internal) coerces a `value` into a type `type`.
-   *
-   *     coerce("200", Number);   => 200
-   *     coerce(200, String);     => "200"
-   *     coerce("yes", Boolean);  => true
-   */
-
-  function coerce (value, type) {
-    if (value === null || typeof value === 'undefined') return value;
-
-    if (type === String) return "" + value;
-    if (type === Number) return +value;
-    if (type === Date) return new Date(value);
-    if (type === Boolean) {
-      if (typeof value === 'string') {
-        value = value.toLowerCase();
-        if (value === '1' || value === 'yes' || value === 'true')
-          return true;
-        else if (value === '0' || value === 'no' || value === 'false' || value === '')
-          return false;
-      } else if (typeof value === 'number') {
-        return value !== 0;
-      } else {
-        return !!value;
-      }
-    }
-  }
-
-  Objekt.use(Ento.events);
+  });
 
   return Ento;
 

@@ -19,17 +19,33 @@
 
   var Objekt;
 
+  /*
+   * Ento
+   */
+
   function Ento() {
     return Objekt.extend();
   }
+
+  /*
+   * utilities
+   */
+
+  var coerce = require('./lib/coerce');
+  var stringUtils = require('./lib/strings');
+  var camelize = stringUtils.camelize;
+  var underscored = stringUtils.underscored;
+
+  /*
+   * etc
+   */
 
   Ento.events = require('./lib/events')(_);
   Ento.persistence = require('./lib/persistence');
   Ento.exportable = require('./lib/exportable');
 
-  /**
-   * Object:
-   * An object class.
+  /*
+   * object
    */
 
   Ento.object = Objekt = function () {
@@ -44,13 +60,13 @@
       }
     }
 
-    /** is: states */
+    /** states */
     this.is = {};
 
-    /** api: Root instance */
+    /** Root instance */
     this.api = api;
 
-    /** raw: raw data */
+    /** raw data */
     this.raw = {};
 
     if (options) this.set(options);
@@ -58,6 +74,11 @@
 
     this.init(options);
   };
+
+  /***
+   * Working with objects:
+   * so and so
+   */
 
   Objekt.extended = function () {
     /**
@@ -207,6 +228,11 @@
 
   Objekt.use(Ento.events);
 
+  /***
+   * Working with instances:
+   * Here's how to work with instances.
+   */
+
   Objekt.use({
 
     /**
@@ -250,44 +276,6 @@
       this.trigger('change:'+key, value);
     }
   });
-
-  function camelize (str) {
-    return str.trim().replace(/[-_\s]+(.)?/g, function (match, c) { return c.toUpperCase(); });
-  }
-
-  function underscored (str) {
-    return str.trim().replace(/([a-z\d])([A-Z]+)/g, '$1_$2').replace(/[\.-\s]+/g, '_').toLowerCase();
-  }
-
-  /**
-   * coerce : coerce(value, type)
-   * (internal) coerces a `value` into a type `type`.
-   *
-   *     coerce("200", Number);   => 200
-   *     coerce(200, String);     => "200"
-   *     coerce("yes", Boolean);  => true
-   */
-
-  function coerce (value, type) {
-    if (value === null || typeof value === 'undefined') return value;
-
-    if (type === String) return "" + value;
-    if (type === Number) return +value;
-    if (type === Date) return new Date(value);
-    if (type === Boolean) {
-      if (typeof value === 'string') {
-        value = value.toLowerCase();
-        if (value === '1' || value === 'yes' || value === 'true')
-          return true;
-        else if (value === '0' || value === 'no' || value === 'false' || value === '')
-          return false;
-      } else if (typeof value === 'number') {
-        return value !== 0;
-      } else {
-        return !!value;
-      }
-    }
-  }
 
   return Ento;
 
