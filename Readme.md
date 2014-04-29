@@ -41,7 +41,8 @@ API is made to be as simple as possible.
 
 ### Basic usage
 
-Running *Ento()* makes a new class, which you can instanciate.
+Running *Ento()* makes a new class, which you can instanciate. It should work 
+just like you'd expect a plain object to.
 
 ```js
 var Ento = require('ento');
@@ -55,6 +56,8 @@ var album = new Album({
   artist: "Maciej Tubis",
   year: 2011
 });
+
+album.genre = 'jazz';
 
 console.log(album.year);
 ```
@@ -71,11 +74,7 @@ var Person = Ento()
   .attr('lastName')
   .attr('address', String)
   .attr('birthday', Date)
-  .attr('fullName', function () { return /*...*/; })
-  .use(Ento.exportable)
-  .use({
-    // instance methods here
-  });
+  .attr('fullName', function () { return /*...*/; });
 
 var me = new Person({ firstName: "Frank", lastName: "Sinatra" });
 me.birthday = "1915-12-02T12:00:00Z";
@@ -103,10 +102,13 @@ book.isbn = "00123";
 
 ### Methods
 
-*use()* adds to the prototype.
+*use()* adds to the prototype. This allows you to add plugins, or add your 
+instance variables.
 
 ```js
 var Person = Ento()
+  .use(Ento.timestamps) // plugin
+  .use(Ento.validations) // plugin
   .use({
     introduce: function() {
       alert("Hi, I'm " + this.name);
@@ -134,7 +136,7 @@ var me = new Name({
   last: 'Coltrane'
 });
 
-me.fullname; // => 'John Coltrane';
+me.fullname; // => 'John Coltrane'
 ```
 
 ### Underscore and camelcase normalization
