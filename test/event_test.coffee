@@ -60,3 +60,18 @@ describe 'events', ->
     instance.stopListening(other)
     other.trigger 'aoeu'
     expect(spy).not.called
+
+  describe 'inheritance', ->
+    it 'simple', ->
+      Model = ento().on('foo', spy)
+      Supermodel = Model.extend()
+      Supermodel.trigger 'foo'
+      expect(spy).called
+
+    it 'dont propagate upwards', ->
+      Model = ento()
+      Supermodel = Model.extend()
+      Supermodel.on 'foo', spy
+      Model.trigger 'foo'
+      expect(spy).not.called
+
