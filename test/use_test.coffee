@@ -41,3 +41,9 @@ describe 'use', ->
 
     expect(mob.armor).eq 0
     expect(mob.hasArmor).eq false
+
+  it 'invalid, null', ->
+    expect(-> ento().use(null)).throw /invalid arg/
+
+  it 'invalid, undefined', ->
+    expect(-> ento().use(undefined)).throw /invalid arg/

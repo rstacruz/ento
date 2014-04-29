@@ -298,21 +298,6 @@
     triggerChange: function (changes) {
       this.trigger('change', changes);
       this.constructor.trigger('change', this, changes);
-    },
-
-    /**
-     * setRaw : setRaw(key, value, options)
-     * Sets the attribute `key` to the value of `value`. This is what dynamic
-     * setters delegate to.
-     *
-     * This also triggers the `change:xxx` event.
-     *
-     *     item.setRaw('name', 'John');
-     *
-     */
-    setRaw: function (key, value, options) {
-      this.raw[key] = value;
-      this.trigger('change:'+key, value);
     }
   });
 

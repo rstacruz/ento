@@ -46,6 +46,20 @@ describe 'attribute coercion', ->
     item = new Book(available: '')
     expect(item.available).be.eql false
 
+  it 'boolean, 0', ->
+    Book = ento()
+      .attr('available', Boolean)
+
+    item = new Book(available: 0)
+    expect(item.available).be.eql false
+
+  it 'boolean, 1', ->
+    Book = ento()
+      .attr('available', Boolean)
+
+    item = new Book(available: 1)
+    expect(item.available).be.eql true
+
   it 'boolean, undefined', ->
     Book = ento()
       .attr('available', Boolean)

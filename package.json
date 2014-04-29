@@ -6,7 +6,7 @@
   "scripts": {
     "test": "mocha",
     "autotest": "mocha --watch -b -R min",
-    "coverage": "mv lib lib~; cp index.js index.js~; (jscoverage lib~ lib; jscoverage index.js; mv index-cov.js index.js; mocha -R html-cov > coverage.html); rm -rf lib index.js; mv lib~ lib; mv index.js~ index.js"
+    "coverage": "cp index.js index.js~; (jscoverage lib; mv lib lib~; mv lib-cov lib; jscoverage index.js; mv index-cov.js index.js; mocha -R html-cov > coverage.html); rm -rf lib index.js; mv lib~ lib; mv index.js~ index.js"
   },
   "author": "Rico Sta. Cruz <hi@ricostacruz.com>",
   "license": "MIT",
