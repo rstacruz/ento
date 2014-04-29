@@ -3,7 +3,7 @@ sources = index.js $(wildcard lib/*.js)
 dist: dist/ento.js dist/ento.min.js verify stats
 
 dist/ento.js: $(sources)
-	node ./lib/bake.js < $< > $@
+	node ./support/bake.js < $< > $@
 
 dist/%.min.js: dist/%.js
 	uglifyjs -m < $^ > $@
