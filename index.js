@@ -72,6 +72,7 @@
     if (options) this.set(options);
     this.is.fresh = true;
 
+    this.constructor.trigger('init', this);
     this.init(options);
   };
 
