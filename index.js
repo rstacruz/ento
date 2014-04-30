@@ -439,14 +439,12 @@
 
     /**
      * trigger : trigger(event)
-     * triggers ar event `event`. Also triggers the event in the
+     * triggers an event `event`. Also triggers the event in the
      * constructor.
      */
 
     trigger: function (event) {
-      var staticArgs = [ this ].concat(arguments);
       Ento.events.trigger.apply(this, arguments);
-      Ento.events.trigger.apply(this.constructor, staticArgs);
       return this;
     }
   });
