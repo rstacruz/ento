@@ -294,12 +294,11 @@
       instance = new Objekt(false);
 
     // determine the params (api, options)
-    for (var i=0, len=arguments.length; i<len; i++) {
-      if (i === 0 && arguments[0] && arguments[0].sync) {
-        api = arguments[0];
-      } else if (typeof arguments[i] === 'object' && !options) {
-        options = arguments[i];
-      }
+    if (arguments.length === 2) {
+      api = arguments[0];
+      options = arguments[1];
+    } else {
+      options = arguments[0];
     }
 
     /*** Instance attributes: */
