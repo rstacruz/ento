@@ -42,7 +42,7 @@ describe 'hasOne', ->
       book.author.id = 3
       expect(book.authorId).eql 3
 
-    it 'when changing', ->
+    it 'stop listening to old one', ->
       previous = book.author
       book.author = new Author(id: 10)
       expect(book.authorId).eql 10
@@ -87,6 +87,13 @@ describe 'hasOne', ->
       book.author.id = 3
       expect(book.authorId).eql 3
 
+    it 'stop listening to old one', ->
+      previous = book.author
+      book.author = new Author(id: 10)
+      expect(book.authorId).eql 10
+      previous.id = 2
+      expect(book.authorId).eql 10
+
   # ----
   describe 'set via .attr_id', ->
     it 'id, camelcase', ->
@@ -100,3 +107,11 @@ describe 'hasOne', ->
       book.author_id = 200
       expect(book.author).be.instanceOf Author
       expect(book.author.id).eql 200
+
+    it 'stop listening to old one', ->
+      previous = book.author
+      book.author = new Author(id: 10)
+      expect(book.authorId).eql 10
+      previous.id = 2
+      expect(book.authorId).eql 10
+
