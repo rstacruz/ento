@@ -19,6 +19,6 @@ stats:
 	@echo "  min.gz:" `cat dist/ento.min.js | gzip | wc -c` b
 
 API.md: index.js lib/persistence.js lib/relations.js
-	(mdextract < $^) > $@
+	cat $^ | mdextract > $@
 
 .PHONY: verify stats

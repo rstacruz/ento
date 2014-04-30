@@ -258,3 +258,84 @@ constructor.
 ### toJSON
 
 exports as a JSON-like object for serialization
+
+<a name="Relations"></a>
+## Relations
+
+You can describe relations using [hasOne], [hasMany], and [belongsTo].
+
+```js
+Person = Ento()
+  .use(Ento.relations)
+  .hasOne('book', { as: 'author' }, function() { return Book; })
+
+Book = Ento()
+  .use(Ento.relations)
+  .belongsTo('author', { as: 'book' }, function() { return Person; })
+```
+
+<a name="hasOne"></a>
+### hasOne `hasOne(attribute, options, class)`
+
+Creates a relation. See [Relations] for an example.
+
+The `options` parameter can have:
+
+* `as` *(string)* <span class='dash'>&mdash;</span> the name of the attribute in the child class that
+describes the inverse relationship.
+
+This creates a custom attribute. When set, it will automatically
+instanciate it.
+
+```js
+q = new Question({ title: 'Why is the sky blue?' });
+q.answer = { body: 'It reflects the ocean' };
+
+q.answer // is of type `Answer`
+```
+
+The parameter `class` is a function that returns a class, such as
+*function() { return Book; }*. The reason for this is that it lets Ento
+lazy-load the class only when it's needed, allowing you to create
+circular relationships (eg: Album has many Songs, and Song has one
+Album).
+
+```js
+var Answer = function() { return require('./answer'); }
+
+Question = Ento()
+  .use(Ento.relations)
+  .hasOne('answer', {as: 'question'}, Answer);
+```
+
+If `as` is given, the child will be updated to have a link to the
+parent. In the example above, you can:
+
+```js
+q = new Question({ title: 'Why is the sky blue?' });
+q.answer = { body: 'It reflects the ocean' };
+
+// `.question` is automatically set, because of `as: 'question'`
+q.answer.question == q
+```
+
+Another example:
+
+```js
+book.author = { id: 3, name: 'Jake' }
+book.author       // is of type `Person`
+book.author.book  // link to parent `book`
+```
+
+<a name="belongsTo"></a>
+### belongsTo `belongsTo(attribute, options, class)`
+
+Creates a relation. Works exactly like [hasOne], but also accounts for a
+*child_id* attribute.
+
+See [hasOne] for documentation on how *belongsTo* works.
+
+```js
+book.author = { id: 3, name: 'John' }
+book.author_id //=> 3
+```
