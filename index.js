@@ -330,6 +330,22 @@
     },
 
     /**
+     * get : get(attr)
+     * return the value of the given attribute *attr*. This is the
+     * same as using the getter, except it can do reserved keywords as
+     * well.
+     */
+
+    get: function (attr) {
+      var prop = this.constructor.properties[attr];
+
+      if (prop)
+        return prop.get.apply(this);
+      else
+        return this[attr];
+    },
+
+    /**
      * trigger : trigger(event)
      * triggers ar event `event`. Also triggers the event in the
      * constructor.
