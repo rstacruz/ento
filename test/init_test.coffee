@@ -20,3 +20,10 @@ describe 'init', ->
     new Model()
     expect(spy).calledOnce
     expect(spy.firstCall.thisValue.constructor).eql Model
+
+  it '.build', ->
+    Model = ento()
+    instance = Model.build(title: 'x')
+
+    expect(instance.title).eq 'x'
+

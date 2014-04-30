@@ -4,6 +4,7 @@ Model = null
 instance = null
 other = null
 spy = null
+spy2 = null
 
 describe 'events', ->
   beforeEach ->
@@ -11,18 +12,30 @@ describe 'events', ->
     instance = new Model
     other = new Model
     spy = sinon.spy()
+    spy2 = sinon.spy()
 
-  it 'on', ->
-    instance.on 'aoeu', spy
-    instance.trigger 'aoeu'
-    expect(spy).calledOnce
+  describe 'on', ->
+    it 'on', ->
+      instance.on 'aoeu', spy
+      instance.trigger 'aoeu'
+      expect(spy).calledOnce
 
-  it 'on with context', ->
-    context = {}
-    instance.on 'aoeu', spy, context
-    instance.trigger 'aoeu'
-    expect(spy).calledOnce
-    expect(spy.firstCall.thisValue).eql context
+    it 'on with context', ->
+      context = {}
+      instance.on 'aoeu', spy, context
+      instance.trigger 'aoeu'
+      expect(spy).calledOnce
+      expect(spy.firstCall.thisValue).eql context
+
+    it 'on(object)', ->
+      instance.on aoeu: spy
+      instance.trigger 'aoeu'
+      expect(spy).calledOnce
+
+    it 'on() with spaces', ->
+      instance.on 'aoeu htns', spy
+      instance.trigger 'aoeu'
+      expect(spy).calledOnce
 
   it 'once', ->
     instance.once 'aoeu', spy
@@ -37,18 +50,47 @@ describe 'events', ->
     instance.trigger 'aoeu'
     expect(spy).not.called
 
-  it 'off(fn)', ->
-    instance.on 'aoeu', spy
-    instance.off 'aoeu', spy
-    instance.trigger 'aoeu'
-    expect(spy).not.called
+  describe 'off', ->
+    it 'off(fn)', ->
+      instance.on 'aoeu', spy
+      instance.off 'aoeu', spy
+      instance.trigger 'aoeu'
+      expect(spy).not.called
 
-  it 'off(fn, context)', ->
-    context = {}
-    instance.on 'aoeu', spy, context
-    instance.off 'aoeu', null, context
-    instance.trigger 'aoeu'
-    expect(spy).not.called
+    it 'off(fn) with retaining', ->
+      instance.on 'aoeu', spy
+      instance.on 'aoeu', spy2
+      instance.off 'aoeu', spy
+      instance.trigger 'aoeu'
+      expect(spy).not.called
+
+    it 'off(fn, context)', ->
+      context = {}
+      instance.on 'aoeu', spy, context
+      instance.off 'aoeu', null, context
+      instance.trigger 'aoeu'
+      expect(spy).not.called
+
+  describe 'trigger', ->
+    it 'one arg', ->
+      instance.on 'aoeu', spy
+      instance.trigger 'aoeu', 100
+      expect(spy).calledWith 100
+
+    it 'two args', ->
+      instance.on 'aoeu', spy
+      instance.trigger 'aoeu', 100, 200
+      expect(spy).calledWith 100, 200
+
+    it 'three args', ->
+      instance.on 'aoeu', spy
+      instance.trigger 'aoeu', 100, 200, 300
+      expect(spy).calledWith 100, 200, 300
+
+    it 'four+ args', ->
+      instance.on 'aoeu', spy
+      instance.trigger 'aoeu', 100, 200, 300, 400
+      expect(spy).calledWith 100, 200, 300, 400
 
   it 'listenTo', ->
     instance.listenTo other, 'aoeu', spy
