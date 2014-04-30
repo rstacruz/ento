@@ -52,3 +52,13 @@ describe 'json', ->
       .build(age: 12, name: "John")
 
     expect(JSON.stringify(obj)).be.like '{"age":12,"name":"John"}'
+
+  it 'dynamic attrs', ->
+    obj = Ento()
+      .attr('name')
+      .attr('fullname', json: false, -> "Mr. #{@name}")
+      .build(name: "Jones")
+
+    expect(obj.name).eql "Jones"
+    expect(obj.fullname).eql "Mr. Jones"
+    expect(JSON.stringify(obj)).be.like '{"name":"Jones"}'
