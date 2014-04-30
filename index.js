@@ -264,9 +264,9 @@
           if (key.hasOwnProperty(k))
             this.set(k, key[k], options);
         }
-        if (!options || !options.silent) {
-          this.triggerChange(key);
-        }
+
+        if (!options || !options.silent)
+          this.trigger('change', key);
 
         return;
       }
@@ -280,24 +280,25 @@
 
       if (!options || !options.silent) {
         this.trigger('change:'+key, value);
-        this.constructor.trigger('change:'+key, this, value);
 
         if (!options || !options.nochange) {
           var changes = {};
           changes[key] = value;
-          this.triggerChange(changes);
+          this.trigger('change', changes);
         }
       }
     },
 
     /**
-     * triggerChange : triggerChange(changes)
-     * (internal) triggers a 'change' event
+     * trigger : trigger(event)
+     * triggers ar event `event`.
      */
 
-    triggerChange: function (changes) {
-      this.trigger('change', changes);
-      this.constructor.trigger('change', this, changes);
+    trigger: function (event) {
+      var staticArgs = [ this ].concat(arguments);
+      Ento.events.trigger.apply(this, arguments);
+      Ento.events.trigger.apply(this.constructor, staticArgs);
+      return this;
     }
   });
 
