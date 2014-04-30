@@ -256,21 +256,38 @@
 
     set: function (key, value, options) {
       // handle objects (.set({...}))
-      if (typeof key === 'object') {
-        options = value || {};
-        options.nochange = true;
+      if (typeof key === 'object')
+        return this.setMany(key, value);
+      else
+        return this.setOne(key, value, options);
+    },
 
-        for (var k in key) {
-          if (key.hasOwnProperty(k))
-            this.set(k, key[k], options);
-        }
+    /**
+     * setMany:
+     * (internal) handles *.set({...})*.
+     */
 
-        if (!options || !options.silent)
-          this.trigger('change', key);
+    setMany: function (attrs, options) {
+      // ensure that the individual .setOne() does not trigger a
+      // `change` event, only a `change:attr` event.
+      if (!options) options = {};
+      options.nochange = true;
 
-        return;
-      }
+      // use .setOne
+      for (var k in attrs)
+        if (attrs.hasOwnProperty(k))
+          this.setOne(k, attrs[k], options);
 
+      if (!options || !options.silent)
+        this.trigger('change', attrs);
+    },
+
+    /**
+     * setOne:
+     * (internal) handles *.set(key, val)*.
+     */
+
+    setOne: function (key, value, options) {
       // set raw; use the setter
       this.is.fresh = false;
       var prop = this.constructor.properties[key];
@@ -291,7 +308,8 @@
 
     /**
      * trigger : trigger(event)
-     * triggers ar event `event`.
+     * triggers ar event `event`. Also triggers the event in the
+     * constructor.
      */
 
     trigger: function (event) {
