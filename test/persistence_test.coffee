@@ -3,7 +3,6 @@ require './setup'
 Model = null
 instance = null
 api = null
-spy = null
 next = process.nextTick
 
 describe 'persistence', ->
@@ -14,10 +13,30 @@ describe 'persistence', ->
       .use(ento.persistence)
     instance = new Model
 
+  describe 'no sync', ->
+    it 'throws an error', ->
+      expect(->
+        instance.fetch()
+      ).throw /no api.sync/
+
   describe 'fetch success', ->
     beforeEach ->
       api.sync = (method, self, fn) ->
         next -> fn(null, title: 'x')
+
+    describe 'events', ->
+      it 'fetching', ->
+        instance.on 'fetching', (fetching = sinon.spy())
+        instance.fetch()
+        expect(fetching).calledOnce
+
+    it 'fetching + load', ->
+      instance.on 'fetching', (fetching = sinon.spy())
+      instance.on 'load', (load = sinon.spy())
+      instance.fetch ->
+        expect(fetching).calledOnce
+        expect(load).calledOnce
+        expect(load).calledAfter fetching
 
     it 'set state before', (done) ->
       instance.fetch (err, res) -> done()
@@ -44,6 +63,22 @@ describe 'persistence', ->
     beforeEach ->
       api.sync = (method, self, fn) ->
           next -> fn(message: 'oops')
+
+    describe 'events', ->
+      it 'fetching', ->
+        instance.on 'fetching', (fetching = sinon.spy())
+        instance.fetch()
+        expect(fetching).calledOnce
+
+    it 'fetching + error', ->
+      instance.on 'fetching', (fetching = sinon.spy())
+      instance.on 'load', (load = sinon.spy())
+      instance.on 'error', (error = sinon.spy())
+      instance.fetch ->
+        expect(fetching).calledOnce
+        expect(load).not.called
+        expect(error).calledOnce
+        expect(error).calledAfter fetching
 
     it 'set state before', (done) ->
       instance.fetch (err, res) -> done()

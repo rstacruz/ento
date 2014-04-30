@@ -100,7 +100,6 @@
    * ~ set: setter function
    * ~ type: type to coerce to. can be String | Boolean | Date | Number
    * ~ enumerable: shows up in keys. (default: true)
-   * ~ exportable: will it show up on export()? (default: true)
    */
 
   Objekt.attr = function (name) {
