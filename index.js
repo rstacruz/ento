@@ -283,8 +283,8 @@
    */
 
   Objekt.api = function (value) {
-    if (!arguments.length) return this._api;
-    this._api = value;
+    if (!arguments.length) return this.prototype.api;
+    this.prototype.api = value;
     return this;
   };
 
@@ -328,7 +328,7 @@
     instance.is = {};
 
     /** api: Root instance */
-    instance.api = api;
+    if (api) instance.api = api;
 
     instance.trigger('build', instance);
     if (options) instance.set(options);
