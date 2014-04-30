@@ -38,7 +38,30 @@ is the Esperanto transation of the word "entity."
  * It's like all of the above, with simpler syntax, and a use-only-what-you-need
  approach.
 
-## API
+### Feature comparison
+
+| Feature                | Ento    | Ember    | Backbone | Spine | Modella |
+|------------------------|---------|----------|----------|-------|---------|
+| Persistence            | ✓       | ✓        | ✓        | ✓     | ✓       |
+| Events                 | ✓       | ✓        | ✓        | ✓     | ✓       |
+| Validations            | ✓       | ✓        | ✓        | ✓     | ✓       |
+| Change tracking        | [✓][ct] | [✓][eob] | ✓        |       | ✓       |
+| Collections            | ✓       | ✓        | [✓][bcl] | ✓     |         |
+| Setters                | ✓       | ✓        |          |       | ✓       |
+| Computed properties    | [✓][cp] | [✓][ecp] |          |       |         |
+| Simple property syntax | ✓       |          |          |       |         |
+| Case normalization     | [✓][cn] |          |          |       |         |
+| Unknown properties     |         | [✓][eup] |          |       |         |
+
+[eup]: http://jfire.io/blog/2012/04/19/why-ember-dot-js-doesnt-use-property-descriptors/
+[eob]: http://emberjs.com/guides/object-model/observers/
+[ecp]: http://emberjs.com/guides/object-model/computed-properties/
+[bcl]: http://backbonejs.org/#Collection
+[cn]: #underscore-and-camelcase-normalization
+[ct]: #change-tracking
+[cp]: #computed-properties
+
+## API overview
 
 API is made to be as simple as possible.
 
@@ -126,7 +149,7 @@ me.introduce();
 me.dance();
 ```
 
-### Computed attributes
+### Computed properties
 
 ```js
 var Name = Ento()
