@@ -5,9 +5,8 @@ describe 'export', ->
     Book = ento()
       .attr('title')
       .attr('author')
-      .use(ento.exportable)
 
-    data = new Book(title: 'T', author: 'A').export()
+    data = new Book(title: 'T', author: 'A').get()
 
     expect(data).be.like { title: 'T', author: 'A', is: { fresh: true } }
 
@@ -15,9 +14,8 @@ describe 'export', ->
     Book = ento()
       .attr('title')
       .attr('author', enumerable: false)
-      .use(ento.exportable)
 
-    data = new Book(title: 'T', author: 'A').export()
+    data = new Book(title: 'T', author: 'A').get()
 
     expect(data.title).eql 'T'
     expect(data.author).be.undefined
@@ -26,9 +24,8 @@ describe 'export', ->
     Book = ento()
       .attr('title')
       .attr('author', export: false)
-      .use(ento.exportable)
 
-    data = new Book(title: 'T', author: 'A').export()
+    data = new Book(title: 'T', author: 'A').get()
 
     expect(data.title).eql 'T'
     expect(data.author).be.undefined

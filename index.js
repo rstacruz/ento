@@ -277,6 +277,7 @@
   Objekt.extend = require('./lib/extend')(_);
 
   Objekt.use(Ento.events);
+  Objekt.use(Ento.exportable);
 
   /**
    * api : api()
@@ -461,6 +462,9 @@
      */
 
     get: function (attr) {
+      if (arguments.length === 0)
+        return this.export();
+
       var prop = this.constructor.attributes[attr];
 
       if (prop)
