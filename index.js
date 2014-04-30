@@ -44,7 +44,7 @@
    */
 
   Ento.events = require('./lib/events')(_);
-  Ento.persistence = require('./lib/persistence');
+  Ento.persistence = require('./lib/persistence')(_);
   Ento.exportable = require('./lib/exportable');
 
   /***
@@ -273,7 +273,14 @@
 
   /**
    * api : api()
-   * sets or gets the api object
+   * sets or gets the api object.
+   *
+   *   var db = {
+   *     sync: function(){ ... }
+   *   };
+   *
+   *   Model = Ento()
+   *     .api(db);
    */
 
   Objekt.api = function (value) {
