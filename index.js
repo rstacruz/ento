@@ -46,7 +46,7 @@
   Ento.events = require('./lib/events')(_);
   Ento.persistence = require('./lib/persistence')(_);
   Ento.exportable = require('./lib/exportable');
-  Ento.relations = require('./lib/relations')(_);
+  Ento.relations = require('./lib/relations')(_, camelize);
 
   /***
    * Object:
@@ -141,6 +141,7 @@
 
   function attrOptions(name) {
     var options = {};
+    name = camelize(name);
     options.name = name;
 
     for (var i=1, len=arguments.length; i<len; i++) {
@@ -411,6 +412,8 @@
      */
 
     setOne: function (key, value, options) {
+      var self = this;
+
       // set raw; use the setter
       this.is.fresh = false;
       var prop = this.constructor.attributes[key];
@@ -419,7 +422,10 @@
       else this[key] = value;
 
       if (!options || !options.silent) {
-        this.trigger('change:'+key, value);
+        var keys = _.uniq([key, camelize(key), underscored(key)]);
+        _.each(keys, function (key) {
+          self.trigger('change:'+key, value);
+        });
 
         if (!options || !options.nochange) {
           var changes = {};
