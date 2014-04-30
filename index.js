@@ -271,6 +271,8 @@
 
   Objekt.use(Ento.events);
 
+  Objekt.api = {};
+
   /*
    * build : build([props])
    * constructor. Calling *Model.build()* is functionally-equivalent to
@@ -291,13 +293,14 @@
     if (this instanceof Objekt)
       instance = this;
     else
-      instance = new Objekt(false);
+      instance = new this(false);
 
     // determine the params (api, options)
     if (arguments.length === 2) {
       api = arguments[0];
       options = arguments[1];
     } else {
+      api = instance.constructor.api;
       options = arguments[0];
     }
 

@@ -12,6 +12,7 @@ describe 'Tests', ->
       @api = { sync: -> }
       Book = ento()
       item = new Book(@api, title: "Hello")
+      expect(item.api).eq @api
       expect(item.title).eq "Hello"
 
     it 'without api', ->
