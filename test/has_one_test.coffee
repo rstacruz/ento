@@ -11,7 +11,7 @@ describe 'hasOne + belongsTo', ->
       .use(Ento.relations)
       .attr('id')
       .attr('name')
-      .attr('fullname', -> "Ms. #{@name}")
+      .attr('fullname', json: false, -> "Ms. #{@name}")
 
     Book = Ento()
       .use(Ento.relations)
@@ -49,6 +49,9 @@ describe 'hasOne + belongsTo', ->
       expect(book.authorId).eql 10
       previous.id = 2
       expect(book.authorId).eql 10
+
+    it 'parent.toJSON', ->
+      expect(book.toJSON()).be.like { id: undefined, authorId: 2 }
 
   xdescribe 'todo', ->
     it 'propagate change event of children', ->
@@ -120,7 +123,7 @@ describe 'hasOne + belongsTo', ->
   describe 'bidirectional', ->
     beforeEach ->
       Author.belongsTo('book', as: 'author', -> Book)
-      book = new Book(author: { name: 'JK', id: 3 })
+      book = new Book(id: 10, author: { name: 'JK', id: 3 })
       author = book.author
 
     it 'works both ways', ->
@@ -134,6 +137,9 @@ describe 'hasOne + belongsTo', ->
     it 'propagate id the other way', ->
       book.id = 5
       expect(author.bookId).eql 5
+
+    it 'child.toJSON', ->
+      expect(JSON.stringify(author)).eql '{"id":3,"name":"JK","bookId":10}'
 
   describe 'hasOne', ->
     beforeEach ->
