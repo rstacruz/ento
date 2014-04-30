@@ -35,7 +35,8 @@ is the Esperanto transation of the word "entity."
  * It's like [Spine].Model, but with change tracking.
  * It's like [Modella], but with collections. (You should probably try Modella, 
      actually.)
- * It's like all of the above, with simpler syntax.
+ * It's like all of the above, with simpler syntax, and a use-only-what-you-need
+ approach.
 
 ## API
 
@@ -109,8 +110,8 @@ instance variables.
 
 ```js
 var Person = Ento()
-  .use(Ento.timestamps) // plugin
-  .use(Ento.validations) // plugin
+  .use(Ento.persistence) // plugin
+  .use(Ento.validation)  // plugin
   .use({
     introduce: function() {
       alert("Hi, I'm " + this.name);

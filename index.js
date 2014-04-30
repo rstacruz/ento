@@ -322,10 +322,10 @@
     /*** Instance attributes: */
 
     /** raw: raw data */
-    instance.raw = {};
+    Object.defineProperty(instance, 'raw', { value: {}, enumerable: false });
 
     /** is: states */
-    instance.is = {};
+    Object.defineProperty(instance, 'is', { value: {}, enumerable: false });
 
     /** api: Root instance */
     if (api) instance.api = api;
