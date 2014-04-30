@@ -344,6 +344,8 @@
   /***
    * Object events:
    *
+   * There are some events available.
+   *
    * ~ build: triggered when building
    * ~ init: when initializing
    * ~ change: when properties are changed

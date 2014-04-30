@@ -194,10 +194,12 @@ Root instance
 ## Object events
 
 
-~ build: triggered when building
-~ init: when initializing
-~ change: when properties are changed
-~ change:attr: when a given attribute is changed
+There are some events available.
+
+* `build` <span class='dash'>&mdash;</span> triggered when building
+* `init` <span class='dash'>&mdash;</span> when initializing
+* `change` <span class='dash'>&mdash;</span> when properties are changed
+* `change:attr` <span class='dash'>&mdash;</span> when a given attribute is changed
 
 <a name="Object_instances"></a>
 ## Object instances
