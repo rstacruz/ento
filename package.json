@@ -20,6 +20,8 @@
     "chai": "^1.9.1",
     "sinon": "^1.8.2",
     "sinon-chai": "^2.5.0",
-    "jscoverage": "^0.5.0-rc2"
+    "jscoverage": "^0.5.0-rc2",
+    "ractive": "^0.4.0",
+    "jsdom": "^0.10.5"
   }
 }
