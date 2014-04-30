@@ -46,6 +46,7 @@
   Ento.events = require('./lib/events')(_);
   Ento.persistence = require('./lib/persistence')(_);
   Ento.exportable = require('./lib/exportable');
+  Ento.relations = require('./lib/relations')(_);
 
   /***
    * Object:
