@@ -35,10 +35,12 @@ describe 'change', ->
     it 'change:title', ->
       expect(changeTitle).calledOnce
       expect(changeTitle).calledWith 'x'
+      expect(changeTitle.firstCall.thisValue).eq book
 
     it 'change', ->
       expect(change).calledOnce
       expect(change).calledWith title: 'x'
+      expect(change.firstCall.thisValue).eq book
 
     it 'model change', ->
       expect(modelChange).calledOnce

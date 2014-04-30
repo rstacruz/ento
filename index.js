@@ -271,9 +271,18 @@
 
   Objekt.use(Ento.events);
 
-  Objekt.api = {};
+  /**
+   * api : api()
+   * sets or gets the api object
+   */
 
-  /*
+  Objekt.api = function (value) {
+    if (!arguments.length) return this._api;
+    this._api = value;
+    return this;
+  };
+
+  /**
    * build : build([props])
    * constructor. Calling *Model.build()* is functionally-equivalent to
    * *new Model()*, and is provided for convenience.
@@ -300,7 +309,7 @@
       api = arguments[0];
       options = arguments[1];
     } else {
-      api = instance.constructor.api;
+      api = instance.constructor.api();
       options = arguments[0];
     }
 

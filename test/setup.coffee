@@ -14,3 +14,5 @@ before ->
     global.ento = require('../' + process.env.distfile)
   else
     global.ento = require('../index.js')
+
+  global.Ento = global.ento
