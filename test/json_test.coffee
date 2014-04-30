@@ -17,6 +17,27 @@ describe 'json', ->
 
     expect(JSON.stringify(obj)).be.like '{"name":"John"}'
 
+  it 'ISO string dates', ->
+    obj = Ento()
+      .attr('date', Date)
+      .build(date: new Date("2010-01-01Z"))
+
+    expect(JSON.stringify(obj)).be.like '{"date":"2010-01-01T00:00:00.000Z"}'
+
+  it 'numbers', ->
+    obj = Ento()
+      .attr('number', Number)
+      .build(number: 0o100)
+
+    expect(JSON.stringify(obj)).be.like '{"number":64}'
+
+  it 'boolean', ->
+    obj = Ento()
+      .attr('bool', Boolean)
+      .build(bool: "1")
+
+    expect(JSON.stringify(obj)).be.like '{"bool":true}'
+
   it 'json: false', ->
     obj = Ento()
       .attr('name')
