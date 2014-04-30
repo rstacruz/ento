@@ -19,3 +19,18 @@ describe 'get', ->
       instance.year = 2001
       expect(instance.get('year')).eq 2001
 
+  describe 'reserved keyword (set)', ->
+    beforeEach ->
+      Model = ento().attr('set')
+      instance = new Model(set: 'x')
+
+    it '.get(str)', ->
+      expect(instance.get('set')).eq 'x'
+
+  describe 'reserved keyword (get)', ->
+    beforeEach ->
+      Model = ento().attr('get')
+      instance = new Model(get: 'x')
+
+    it '.get(str)', ->
+      expect(instance.get('get')).eq 'x'

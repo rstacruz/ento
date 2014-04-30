@@ -121,10 +121,12 @@
     // save options into `Object.attributes`
     this.attributes[name] = options;
 
-    // defineProperty as needed, on both camel and underscore
+    // defineProperty as needed, on both camel and underscore.
+    // skip anything that already exists in the prototype.
     var names = _.uniq([ name, camelize(name), underscored(name) ]);
     var setter = function (value) { this.setOne(name, value); };
     for (var i=0, len=names.length; i<len; i++) {
+      if (this.prototype[names[i]]) continue;
       Object.defineProperty(this.prototype, names[i], {
         enumerable: options.enumerable,
         get: options.get,
