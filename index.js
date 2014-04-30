@@ -84,7 +84,7 @@
   Objekt.extended = function () {
     /**
      * attributes : Array
-     * List of attributes.
+     * List of attributes registered with [attr()].
      */
 
     this.attributes = {};
@@ -248,8 +248,35 @@
   };
 
   /**
-   * extend : extend(props)
-   * Subclasses `Objekt` into a new class.
+   * extend : extend([props])
+   * Subclasses [ento.object] into a new class. This creates a new
+   * subclass that inherits all of the parent class's methods,
+   * attributes and event listeners.
+   *
+   *     var Shape = Ento();
+   *     var Circle = Shape.extend();
+   *
+   * A more detailed example: using *.extend()* in a model with
+   * attributes creates a new model with the same attributes, allowing
+   * you to build on top of another model.
+   *
+   *     var Address = Ento()
+   *       .attr('street')
+   *       .attr('city')
+   *       .attr('zip');
+   *
+   *      var ApartmentAddress = Address.extend()
+   *        .attr('unit')
+   *        .attr('apartment');
+   *
+   * You may also pass an object to *.extend()*. This will use those
+   * objects as properties, like Backbone. This is functionally
+   * equivalent to *.extend().use({...})*.
+   *
+   *     var User = Ento();
+   *     var Admin = User.extend({
+   *       lol: function() { ... }
+   *     });
    */
 
   Objekt.extend = require('./lib/extend')(_);

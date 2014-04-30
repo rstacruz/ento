@@ -31,6 +31,12 @@ describe 'events', ->
     instance.trigger 'aoeu'
     expect(spy).calledOnce
 
+  it 'off() all', ->
+    instance.on 'aoeu', spy
+    instance.off()
+    instance.trigger 'aoeu'
+    expect(spy).not.called
+
   it 'off(fn)', ->
     instance.on 'aoeu', spy
     instance.off 'aoeu', spy
