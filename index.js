@@ -48,6 +48,7 @@
   Ento.collection = require('./lib/collection')(_);
   Ento.exportable = require('./lib/exportable');
   Ento.relations = require('./lib/relations')(_, camelize);
+  Ento.ractiveAdaptor = require('./lib/ractive_adaptor')(_);
 
   /***
    * Object:

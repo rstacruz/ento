@@ -12,3 +12,6 @@ module.exports = ->
         window.console = console
         done()
 
+  beforeEach ->
+    document.body.innerHTML = ''
+
