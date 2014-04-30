@@ -48,7 +48,7 @@ describe 'Tests', ->
       expect(item.title).eq 'hi'
 
     it "doesn't propagate to global", ->
-      expect(ento.object.properties).be.like {}
+      expect(ento.object.attributes).be.like {}
 
     it 'sets raw', ->
       item.title = 'hi'
@@ -62,15 +62,15 @@ describe 'Tests', ->
       item.set(title: 'hi')
       expect(item.raw.title).eq 'hi'
 
-    it 'adds to properties', ->
-      expect(Object.keys(item.constructor.properties)).be.like ['title', 'in_stock']
+    it 'adds to attributes', ->
+      expect(Object.keys(item.constructor.attributes)).be.like ['title', 'in_stock']
 
-    it 'adds to properties, 2', ->
-      expect(Object.keys(Book.properties)).be.like ['title', 'in_stock']
+    it 'adds to attributes, 2', ->
+      expect(Object.keys(Book.attributes)).be.like ['title', 'in_stock']
 
     it 'property definition', ->
-      expect(Book.properties.title).be.a 'object'
-      expect(Book.properties.in_stock).be.a 'object'
+      expect(Book.attributes.title).be.a 'object'
+      expect(Book.attributes.in_stock).be.a 'object'
 
     it 'propertyNames', ->
       expect(Book.propertyNames()).be.like ['title', 'in_stock']

@@ -83,11 +83,11 @@
 
   Objekt.extended = function () {
     /**
-     * properties : Array
-     * List of properties.
+     * attributes : Array
+     * List of attributes.
      */
 
-    this.properties = {};
+    this.attributes = {};
   };
 
   Objekt.extended();
@@ -118,8 +118,8 @@
   Objekt.attr = function (name) {
     var options = attrOptions.apply(this, arguments);
 
-    // save options into `Object.properties`
-    this.properties[name] = options;
+    // save options into `Object.attributes`
+    this.attributes[name] = options;
 
     // defineProperty as needed, on both camel and underscore
     var names = _.uniq([ name, camelize(name), underscored(name) ]);
@@ -193,7 +193,7 @@
    */
 
   Objekt.propertyNames = function () {
-    return _.keys(this.properties);
+    return _.keys(this.attributes);
   };
 
   /**
@@ -313,7 +313,7 @@
     setOne: function (key, value, options) {
       // set raw; use the setter
       this.is.fresh = false;
-      var prop = this.constructor.properties[key];
+      var prop = this.constructor.attributes[key];
 
       if (prop && prop.set) prop.set.call(this, value);
       else this[key] = value;
@@ -337,7 +337,7 @@
      */
 
     get: function (attr) {
-      var prop = this.constructor.properties[attr];
+      var prop = this.constructor.attributes[attr];
 
       if (prop)
         return prop.get.apply(this);
