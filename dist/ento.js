@@ -345,7 +345,7 @@ module.exports = function (_) {
     var res = this;
     res.fresh = true;
 
-    // Clear out each of the properties
+    // Clear out each of the attributes
     // TODO: Make generic support props
     if (res.props)
       res.props.forEach(function (key) {
@@ -365,24 +365,24 @@ module.exports = function (_) {
 
   /**
    * export : export()
-   * exports all attributes into an object, including dynamic properties.
+   * exports all attributes into an object, including dynamic attributes.
    */
 
   export: function() {
     var obj = {};
-    var props = this.constructor.properties;
+    var attrs = this.constructor.attributes;
 
-    // propagate properties
-    for (var prop in props) {
-      if (props.hasOwnProperty(prop)) {
-        var options = props[prop];
+    // attragate attributes
+    for (var attr in attrs) {
+      if (attrs.hasOwnProperty(attr)) {
+        var options = attrs[attr];
         if (options.enumerable !== false && options.exportable !== false) {
-          obj[prop] = this[prop];
+          obj[attr] = this[attr];
         }
       }
     }
 
-    // propagate state
+    // attragate state
     obj.is = this.is;
 
     return obj;
@@ -419,6 +419,7 @@ module.exports = function (_) {
     if (options) this.set(options);
     this.is.fresh = true;
 
+    this.constructor.trigger('init', this);
     this.init(options);
   };
 
@@ -429,11 +430,11 @@ module.exports = function (_) {
 
   Objekt.extended = function () {
     /**
-     * properties : Array
-     * List of properties.
+     * attributes : Array
+     * List of attributes.
      */
 
-    this.properties = {};
+    this.attributes = {};
   };
 
   Objekt.extended();
@@ -462,8 +463,45 @@ module.exports = function (_) {
    */
 
   Objekt.attr = function (name) {
-    // parse arguments into options
+    var options = attrOptions.apply(this, arguments);
+
+    // save options into `Object.attributes`
+    this.attributes[name] = options;
+
+    // defineProperty as needed, on both camel and underscore.
+    // skip anything that already exists in the prototype.
+    var names = _.uniq([ name, camelize(name), underscored(name) ]);
+    var setter = function (value) { this.setOne(name, value); };
+    for (var i=0, len=names.length; i<len; i++) {
+      if (this.prototype[names[i]]) continue;
+      Object.defineProperty(this.prototype, names[i], {
+        enumerable: options.enumerable,
+        get: options.get,
+        set: setter
+      });
+    }
+
+    return this;
+  };
+
+  /*
+   * attrOptions:
+   * (internal) parses arguments passed onto `.attr` to create an options hash,
+   * filling in defaults as needed.
+   *
+   *      {
+   *        get: function() { ... }, // *
+   *        set: function() { ... }, // *
+   *        enumerable: true, // *
+   *        type: String,
+   *      },
+   *      // * - always there, even if not explicitly passed to .attr.
+   */
+
+  function attrOptions(name) {
     var options = {};
+    options.name = name;
+
     for (var i=1, len=arguments.length; i<len; i++) {
       var arg = arguments[i];
       if (typeof arg === 'object') {
@@ -488,35 +526,23 @@ module.exports = function (_) {
     if (!options.set)
       options.set = function (value) { this.raw[name] = value; };
 
-    // save options
-    this.properties[name] = options;
-
-    var names = _.uniq([ name, camelize(name), underscored(name) ]);
-    for (var i=0, len=names.length; i<len; i++) {
-      Object.defineProperty(this.prototype, names[i], {
-        enumerable: options.enumerable,
-        get: options.get,
-        set: function (value) { this.set(name, value); }
-      });
-    }
-
-    return this;
-  };
+    return options;
+  }
 
   /**
-   * propertyNames:
+   * attributeNames:
    * returns property names.
    *
    *     Name = ento()
    *       .attr('first')
    *       .attr('last');
    *
-   *    Name.propertyNames();
+   *    Name.attributeNames();
    *    => ['first', 'last']
    */
 
-  Objekt.propertyNames = function () {
-    return _.keys(this.properties);
+  Objekt.attributeNames = function () {
+    return _.keys(this.attributes);
   };
 
   /**
@@ -587,7 +613,7 @@ module.exports = function (_) {
       child = function(){ return parent.apply(this, arguments); };
     }
 
-    // Add static properties to the constructor function, if supplied.
+    // Add static attributes to the constructor function, if supplied.
     _.extend(child, parent, staticProps);
 
     // Set the prototype chain to inherit from `parent`, without calling
@@ -596,7 +622,7 @@ module.exports = function (_) {
     Surrogate.prototype = parent.prototype;
     child.prototype = new Surrogate();
 
-    // Add prototype properties (instance properties) to the subclass,
+    // Add prototype attributes (instance attributes) to the subclass,
     // if supplied.
     if (protoProps) _.extend(child.prototype, protoProps);
 
@@ -639,63 +665,83 @@ module.exports = function (_) {
 
     set: function (key, value, options) {
       // handle objects (.set({...}))
-      if (typeof key === 'object') {
-        options = value || {};
-        options.nochange = true;
+      if (typeof key === 'object')
+        return this.setMany(key, value);
+      else
+        return this.setOne(key, value, options);
+    },
 
-        for (var k in key) {
-          if (key.hasOwnProperty(k))
-            this.set(k, key[k], options);
-        }
-        if (!options || !options.silent) {
-          this.triggerChange(key);
-        }
+    /**
+     * setMany:
+     * (internal) handles *.set({...})*.
+     */
 
-        return;
-      }
+    setMany: function (attrs, options) {
+      // ensure that the individual .setOne() does not trigger a
+      // `change` event, only a `change:attr` event.
+      if (!options) options = {};
+      options.nochange = true;
 
+      // use .setOne
+      for (var k in attrs)
+        if (attrs.hasOwnProperty(k))
+          this.setOne(k, attrs[k], options);
+
+      if (!options || !options.silent)
+        this.trigger('change', attrs);
+    },
+
+    /**
+     * setOne:
+     * (internal) handles *.set(key, val)*.
+     */
+
+    setOne: function (key, value, options) {
       // set raw; use the setter
       this.is.fresh = false;
-      var prop = this.constructor.properties[key];
+      var prop = this.constructor.attributes[key];
 
       if (prop && prop.set) prop.set.call(this, value);
       else this[key] = value;
 
       if (!options || !options.silent) {
         this.trigger('change:'+key, value);
-        this.constructor.trigger('change:'+key, this, value);
 
         if (!options || !options.nochange) {
           var changes = {};
           changes[key] = value;
-          this.triggerChange(changes);
+          this.trigger('change', changes);
         }
       }
     },
 
     /**
-     * triggerChange : triggerChange(changes)
-     * (internal) triggers a 'change' event
+     * get : get(attr)
+     * return the value of the given attribute *attr*. This is the
+     * same as using the getter, except it can do reserved keywords as
+     * well.
      */
 
-    triggerChange: function (changes) {
-      this.trigger('change', changes);
-      this.constructor.trigger('change', this, changes);
+    get: function (attr) {
+      var prop = this.constructor.attributes[attr];
+
+      if (prop)
+        return prop.get.apply(this);
+      else
+        return this[attr];
     },
 
     /**
-     * setRaw : setRaw(key, value, options)
-     * Sets the attribute `key` to the value of `value`. This is what dynamic
-     * setters delegate to.
-     *
-     * This also triggers the `change:xxx` event.
-     *
-     *     item.setRaw('name', 'John');
-     *
+     * trigger : trigger(event)
+     * triggers ar event `event`. Also triggers the event in the
+     * constructor.
      */
-    setRaw: function (key, value, options) {
-      this.raw[key] = value;
-      this.trigger('change:'+key, value);
+
+    trigger: function (event) {
+      var staticArgs = [ this ].concat(arguments);
+      Ento.events.trigger.apply(this, arguments);
+      Ento.events.trigger.apply(this.constructor, staticArgs);
+      return this;
     }
   });
 
