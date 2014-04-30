@@ -25,7 +25,7 @@ describe 'export', ->
   it 'hide non-exportables', ->
     Book = ento()
       .attr('title')
-      .attr('author', exportable: false)
+      .attr('author', export: false)
       .use(ento.exportable)
 
     data = new Book(title: 'T', author: 'A').export()

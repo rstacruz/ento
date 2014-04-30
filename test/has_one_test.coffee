@@ -3,8 +3,9 @@ require './setup'
 Author = null
 Book = null
 book = null
+author = null
 
-describe 'hasOne', ->
+describe 'hasOne + belongsTo', ->
   beforeEach ->
     Author = Ento()
       .use(Ento.relations)
@@ -15,7 +16,7 @@ describe 'hasOne', ->
     Book = Ento()
       .use(Ento.relations)
       .attr('id')
-      .hasOne('author', inverse: 'book', -> Author)
+      .belongsTo('author', as: 'book', -> Author)
 
   # ----
   describe 'fresh', ->
@@ -115,3 +116,34 @@ describe 'hasOne', ->
       previous.id = 2
       expect(book.authorId).eql 10
 
+  # ---
+  describe 'bidirectional', ->
+    beforeEach ->
+      Author.belongsTo('book', as: 'author', -> Book)
+      book = new Book(author: { name: 'JK', id: 3 })
+      author = book.author
+
+    it 'works both ways', ->
+      expect(author.book).eql book
+      expect(book.author).eql author
+
+    it 'propagate id', ->
+      author.id = 4
+      expect(book.authorId).eql 4
+
+    it 'propagate id the other way', ->
+      book.id = 5
+      expect(author.bookId).eql 5
+
+  describe 'hasOne', ->
+    beforeEach ->
+      Author.hasOne('book', as: 'author', -> Book)
+      book = new Book(author: { name: 'JK', id: 3 })
+      author = book.author
+
+    it 'no id', ->
+      expect(author.book_id).be.undefined
+      expect(author.bookId).be.undefined
+
+    it 'has model', ->
+      expect(author.book).eql book
