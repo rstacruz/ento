@@ -19,8 +19,11 @@
 
   var Objekt;
 
-  /*
-   * Ento
+  /***
+   * Ento:
+   * Creates a model subclass.
+   *
+   *     var Model = Ento();
    */
 
   function Ento() {
@@ -44,47 +47,32 @@
   Ento.persistence = require('./lib/persistence');
   Ento.exportable = require('./lib/exportable');
 
-  /*
-   * object
+  /***
+   * Object:
    */
 
-  Ento.object = Objekt = function () {
-    var api, options;
-
-    // determine the params (api, options)
-    for (var i=0, len=arguments.length; i<len; i++) {
-      if (i === 0 && arguments[0] && arguments[0].sync) {
-        api = arguments[0];
-      } else if (typeof arguments[i] === 'object' && !options) {
-        options = arguments[i];
-      }
-    }
-
-    /** states */
-    this.is = {};
-
-    /** Root instance */
-    this.api = api;
-
-    /** raw data */
-    this.raw = {};
-
-    if (options) this.set(options);
-    this.is.fresh = true;
-
-    this.constructor.trigger('init', this);
-    this.init(options);
+  Ento.object = Objekt = function (options) {
+    // giving `false` means the .build() step should be bypassed.
+    // this is an internal convention used by .build().
+    if (options !== false)
+      return this.constructor.build.apply(this, arguments);
   };
 
-  /***
-   * Working with objects:
-   * so and so
-   */
-
   Objekt.extended = function () {
+
     /**
-     * attributes : Array
+     * attributes : Object
      * List of attributes registered with [attr()].
+     *
+     *   Page = Eton.extend()
+     *     .attr('title')
+     *     .attr('slug');
+     *
+     *   Page.attributes.title
+     *   => { name: 'title', get: [Function], set: [Function], ... }
+     *
+     *   Page.attributes.slug
+     *   => { name: 'slug', get: [Function], set: [Function], ... }
      */
 
     this.attributes = {};
@@ -100,11 +88,11 @@
    *
    * Can be called as:
    *
-   *     attr('name')
-   *     attr('name', function())
-   *     attr('name', function(), function())
-   *     attr('name', String|Boolean|Date|Number)
-   *     attr('name', { options })
+   *   attr('name')
+   *   attr('name', function())
+   *   attr('name', function(), function())
+   *   attr('name', String|Boolean|Date|Number)
+   *   attr('name', { options })
    *
    * Possible options:
    *
@@ -142,13 +130,13 @@
    * (internal) parses arguments passed onto `.attr` to create an options hash,
    * filling in defaults as needed.
    *
-   *      {
-   *        get: function() { ... }, // *
-   *        set: function() { ... }, // *
-   *        enumerable: true, // *
-   *        type: String,
-   *      },
-   *      // * - always there, even if not explicitly passed to .attr.
+   *   {
+   *     get: function() { ... }, // *
+   *     set: function() { ... }, // *
+   *     enumerable: true, // *
+   *     type: String,
+   *   },
+   *   // * - always there, even if not explicitly passed to .attr.
    */
 
   function attrOptions(name) {
@@ -186,12 +174,12 @@
    * attributeNames:
    * returns property names.
    *
-   *     Name = ento()
-   *       .attr('first')
-   *       .attr('last');
+   *   Name = ento()
+   *     .attr('first')
+   *     .attr('last');
    *
-   *    Name.attributeNames();
-   *    => ['first', 'last']
+   *   Name.attributeNames();
+   *   => ['first', 'last']
    */
 
   Objekt.attributeNames = function () {
@@ -211,23 +199,23 @@
    *
    * Example:
    *
-   *     var Person = ento()
-   *       .attr('name')
-   *       .use({
-   *         greet: function() {
-   *           alert("Hello, " + this.name);
-   *         }
-   *       })
+   *   var Person = ento()
+   *     .attr('name')
+   *     .use({
+   *       greet: function() {
+   *         alert("Hello, " + this.name);
+   *       }
+   *     })
    *
    * Or as a function:
    *
-   *     var Timestamps = function (model) {
-   *       model
-   *         .attr('createdAt')
-   *         .attr('updatedAt');
-   *     }
+   *   var Timestamps = function (model) {
+   *     model
+   *       .attr('createdAt')
+   *       .attr('updatedAt');
+   *   }
    *
-   *     var Record = ento().use(Timestamps);
+   *   var Record = ento().use(Timestamps);
    */
 
   Objekt.use = function (props, staticProps) {
@@ -253,46 +241,111 @@
    * subclass that inherits all of the parent class's methods,
    * attributes and event listeners.
    *
-   *     var Shape = Ento();
-   *     var Circle = Shape.extend();
+   *   var Shape = Ento();
+   *   var Circle = Shape.extend();
    *
    * A more detailed example: using *.extend()* in a model with
    * attributes creates a new model with the same attributes, allowing
    * you to build on top of another model.
    *
-   *     var Address = Ento()
-   *       .attr('street')
-   *       .attr('city')
-   *       .attr('zip');
+   *   var Address = Ento()
+   *     .attr('street')
+   *     .attr('city')
+   *     .attr('zip');
    *
-   *      var ApartmentAddress = Address.extend()
-   *        .attr('unit')
-   *        .attr('apartment');
+   *    var ApartmentAddress = Address.extend()
+   *      .attr('unit')
+   *      .attr('apartment');
    *
    * You may also pass an object to *.extend()*. This will use those
    * objects as properties, like Backbone. This is functionally
    * equivalent to *.extend().use({...})*.
    *
-   *     var User = Ento();
-   *     var Admin = User.extend({
-   *       lol: function() { ... }
-   *     });
+   *   var User = Ento();
+   *   var Admin = User.extend({
+   *     lol: function() { ... }
+   *   });
    */
 
   Objekt.extend = require('./lib/extend')(_);
 
   Objekt.use(Ento.events);
 
+  /*
+   * build : build([props])
+   * constructor. Calling *Model.build()* is functionally-equivalent to
+   * *new Model()*, and is provided for convenience.
+   *
+   *   var Album = Ento()
+   *     .attr('title')
+   *     .attr('year', Number);
+   *
+   *   var item = Album.build({
+   *     title: 'Kind of Blue',
+   *     year: 1984
+   *    });
+   */
+
+  Objekt.build = function () {
+    var api, options, instance;
+    if (this instanceof Objekt)
+      instance = this;
+    else
+      instance = new Objekt(false);
+
+    // determine the params (api, options)
+    for (var i=0, len=arguments.length; i<len; i++) {
+      if (i === 0 && arguments[0] && arguments[0].sync) {
+        api = arguments[0];
+      } else if (typeof arguments[i] === 'object' && !options) {
+        options = arguments[i];
+      }
+    }
+
+    /*** Instance attributes: */
+
+    /** is: states */
+    instance.is = {};
+
+    /** api: Root instance */
+    instance.api = api;
+
+    /** raw: raw data */
+    instance.raw = {};
+
+    instance.constructor.trigger('build', instance);
+    if (options) instance.set(options);
+    instance.is.fresh = true;
+
+    instance.constructor.trigger('init', instance);
+    instance.init(options);
+    return instance;
+  };
+
   /***
-   * Working with instances:
-   * Here's how to work with instances.
+   * Object events:
+   *
+   * ~ build: triggered when building
+   * ~ init: when initializing
+   * ~ change: when properties are changed
+   * ~ change:attr: when a given attribute is changed
+   */
+
+  /***
+   * Object instances:
    */
 
   Objekt.use({
 
     /**
      * init:
-     * Sorta constructor. Override this.
+     * The constructor. Override this.
+     *
+     *     Model = Ento()
+     *       .use({
+     *         init: function() {
+     *         })
+     *       });
      */
 
     init: function (options) {
@@ -315,7 +368,7 @@
     },
 
     /**
-     * setMany:
+     * setMany : setMany(attrs, [options])
      * (internal) handles *.set({...})*.
      */
 
@@ -335,8 +388,8 @@
     },
 
     /**
-     * setOne:
-     * (internal) handles *.set(key, val)*.
+     * setOne : setOne(key, value, [options])
+     * (internal) handles *.set(key, value)*.
      */
 
     setOne: function (key, value, options) {
@@ -363,6 +416,16 @@
      * return the value of the given attribute *attr*. This is the
      * same as using the getter, except it can do reserved keywords as
      * well.
+     *
+     *   var Document = Ento()
+     *     .attr('title')
+     *     .attr('author');
+     *
+     *   var doc = new Document();
+     *
+     *   doc.title = "Manual";
+     *   doc.get('title')  //=> "Manual"
+     *   doc.title         //=> "Manual"
      */
 
     get: function (attr) {
