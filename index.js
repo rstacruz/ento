@@ -191,15 +191,19 @@
   /**
    * use : use(...)
    * uses a mixin.
+   * Extends the model with a given plugin. When passed an *Object*, the
+   * prototype is extended with it (see first example). When passed a
+   * *Function*, it is called and passed the model as the first parameter,
+   * allowing you to extend the model in any way.
    *
    * ~ use(props, [staticProps]) :
-   *   extends the prototype with `props`. optionally, you can pass
+   *   extends the prototype with `props` (*Object*). optionally, you can pass
    *   `staticProps` too to extend the object itself.
    * ~ use(fn) :
-   *   call the function `fn`, passing the model as the first argument. This
+   *   call `fn` (*Function*), passing the model as the first argument. This
    *   allows you to extend the class in whatever way you wish.
    *
-   * Example:
+   * An example of using `.use()` with an *Object*:
    *
    *   var Person = ento()
    *     .attr('name')
@@ -209,7 +213,7 @@
    *       }
    *     })
    *
-   * Or as a function:
+   * An example of using `.use()` with a *Function*:
    *
    *   var Timestamps = function (model) {
    *     model
