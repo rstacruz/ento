@@ -42,6 +42,8 @@ readStdin(function (e, data) {
 });
 
 function bake(data, prefix) {
+  data = data.replace(/\/\*(\r|\n|\s|.)*?\*\//g, '');
+  data = data.replace(/\/\/.*?$/g, '');
   data = data.replace(/require\(['"](\.[\.\/]*)(.*?)['"]\)/g, function (e, prefix, fn) {
     var contents = fs.readFileSync(prefix + fn + '.js', 'utf-8');
     contents = bake(contents, prefix);
