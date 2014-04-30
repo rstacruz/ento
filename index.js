@@ -464,6 +464,30 @@
       Ento.events.trigger.apply(this, arguments);
       Ento.events.triggerFor.call(this.constructor, this, event, [].slice.call(arguments, 1));
       return this;
+    },
+
+    /**
+     * toJSON:
+     * exports as a JSON-like object for serialization
+     */
+
+    toJSON: function () {
+      var object = {};
+      var self = this;
+
+      // catch all enumerable properties
+      _.each(this, function (value, key) {
+        object[key] = value;
+      });
+
+      // catch dynamic attributes
+      var attrs = this.constructor.attributes;
+      _.each(attrs, function (definition, attr) {
+        if (definition.json === false) return;
+        object[attr] = self[attr];
+      });
+
+      return object;
     }
   });
 

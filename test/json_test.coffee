@@ -10,16 +10,24 @@ describe 'json', ->
     obj = Ento().build(a: 1, b: 2)
     expect(Object.keys(obj)).be.like ['a', 'b']
 
-  xit 'keys of defined attrs', ->
+  it 'defined attrs', ->
     obj = Ento()
       .attr('name')
       .build(name: "John")
 
-    expect(Object.keys(obj)).be.like ['name']
+    expect(JSON.stringify(obj)).be.like '{"name":"John"}'
 
-  xit 'ok with attrs', ->
+  it 'json: false', ->
     obj = Ento()
       .attr('name')
-      .build(name: "John")
+      .attr('age', json: false)
+      .build(name: "John", age: 12)
 
-    expect(JSON.stringify(obj)).eql '{"name":"John"}'
+    expect(JSON.stringify(obj)).be.like '{"name":"John"}'
+
+  it 'defined attrs with extra values', ->
+    obj = Ento()
+      .attr('name')
+      .build(age: 12, name: "John")
+
+    expect(JSON.stringify(obj)).be.like '{"age":12,"name":"John"}'
