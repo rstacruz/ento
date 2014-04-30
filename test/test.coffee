@@ -72,8 +72,8 @@ describe 'Tests', ->
       expect(Book.attributes.title).be.a 'object'
       expect(Book.attributes.in_stock).be.a 'object'
 
-    it 'propertyNames', ->
-      expect(Book.propertyNames()).be.like ['title', 'in_stock']
+    it 'attributeNames', ->
+      expect(Book.attributeNames()).be.like ['title', 'in_stock']
 
     it 'triggers a change:title event', (done) ->
       item.on 'change:title', (val) ->

@@ -181,18 +181,18 @@
   }
 
   /**
-   * propertyNames:
+   * attributeNames:
    * returns property names.
    *
    *     Name = ento()
    *       .attr('first')
    *       .attr('last');
    *
-   *    Name.propertyNames();
+   *    Name.attributeNames();
    *    => ['first', 'last']
    */
 
-  Objekt.propertyNames = function () {
+  Objekt.attributeNames = function () {
     return _.keys(this.attributes);
   };
 
