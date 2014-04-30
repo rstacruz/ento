@@ -4,6 +4,7 @@ Author = null
 Book = null
 book = null
 author = null
+spy = null
 
 describe 'hasOne + belongsTo', ->
   beforeEach ->
@@ -52,10 +53,6 @@ describe 'hasOne + belongsTo', ->
 
     it 'parent.toJSON', ->
       expect(book.toJSON()).be.like { id: undefined, authorId: 2 }
-
-  xdescribe 'todo', ->
-    it 'propagate change event of children', ->
-    it 'belongsTo', ->
 
   # ----
   describe 'change events', ->
