@@ -116,8 +116,43 @@
    */
 
   Objekt.attr = function (name) {
-    // parse arguments into options
+    var options = attrOptions.apply(this, arguments);
+
+    // save options into `Object.properties`
+    this.properties[name] = options;
+
+    // defineProperty as needed, on both camel and underscore
+    var names = _.uniq([ name, camelize(name), underscored(name) ]);
+    var setter = function (value) { this.setOne(name, value); };
+    for (var i=0, len=names.length; i<len; i++) {
+      Object.defineProperty(this.prototype, names[i], {
+        enumerable: options.enumerable,
+        get: options.get,
+        set: setter
+      });
+    }
+
+    return this;
+  };
+
+  /*
+   * attrOptions:
+   * (internal) parses arguments passed onto `.attr` to create an options hash,
+   * filling in defaults as needed.
+   *
+   *      {
+   *        get: function() { ... }, // *
+   *        set: function() { ... }, // *
+   *        enumerable: true, // *
+   *        type: String,
+   *      },
+   *      // * - always there, even if not explicitly passed to .attr.
+   */
+
+  function attrOptions(name) {
     var options = {};
+    options.name = name;
+
     for (var i=1, len=arguments.length; i<len; i++) {
       var arg = arguments[i];
       if (typeof arg === 'object') {
@@ -142,20 +177,8 @@
     if (!options.set)
       options.set = function (value) { this.raw[name] = value; };
 
-    // save options
-    this.properties[name] = options;
-
-    var names = _.uniq([ name, camelize(name), underscored(name) ]);
-    for (var i=0, len=names.length; i<len; i++) {
-      Object.defineProperty(this.prototype, names[i], {
-        enumerable: options.enumerable,
-        get: options.get,
-        set: function (value) { this.set(name, value); }
-      });
-    }
-
-    return this;
-  };
+    return options;
+  }
 
   /**
    * propertyNames:
