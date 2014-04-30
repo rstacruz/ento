@@ -123,3 +123,9 @@ describe 'events', ->
       Model.trigger 'foo'
       expect(spy).not.called
 
+  describe 'model propagation', ->
+    it 'ok', ->
+      Model.on 'aoeu', spy
+      instance = new Model
+      instance.trigger('aoeu', 200)
+      expect(spy).called

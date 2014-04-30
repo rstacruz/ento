@@ -306,20 +306,20 @@
 
     /*** Instance attributes: */
 
+    /** raw: raw data */
+    instance.raw = {};
+
     /** is: states */
     instance.is = {};
 
     /** api: Root instance */
     instance.api = api;
 
-    /** raw: raw data */
-    instance.raw = {};
-
-    instance.constructor.trigger('build', instance);
+    instance.trigger('build', instance);
     if (options) instance.set(options);
     instance.is.fresh = true;
 
-    instance.constructor.trigger('init', instance);
+    instance.trigger('init', instance);
     instance.init(options);
     return instance;
   };
@@ -447,6 +447,7 @@
 
     trigger: function (event) {
       Ento.events.trigger.apply(this, arguments);
+      Ento.events.triggerFor.call(this.constructor, this, event, [].slice.call(arguments, 1));
       return this;
     }
   });
