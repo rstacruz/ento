@@ -282,6 +282,11 @@ module.exports = function (_) {
   };
 };
 })();return module.exports;})())(_);
+  Ento.collection = ((function(){var module={exports:{}},exports=module.exports;(function(){module.exports = function (_) {
+  return function() {
+  };
+};
+})();return module.exports;})())(_);
   Ento.exportable = ((function(){var module={exports:{}},exports=module.exports;(function(){module.exports = {
 
   
@@ -337,6 +342,10 @@ module.exports = function (_, camelize) {
         set: function (value) {
           var child, parent = this;
 
+          // if there's an existing object, unhook it first
+          if (exportable)
+            this.stopListening(child, 'change');
+
           // .author = null
           if (!value) {
             this.raw[attr] = undefined;
@@ -354,10 +363,19 @@ module.exports = function (_, camelize) {
           else if (value instanceof klass())
             child = value;
           else
-            throw new Error("wtf is that");
+            throw new Error("invalid type");
 
           // set model instance (`.author = ...`)
           this.raw[attr] = child;
+
+          // propagate `change` event, but only for hasOne
+          // TODO: why are you checking 'exportable'? refactor that
+          if (exportable) {
+            this.listenTo(child, 'change', function () {
+              parent.trigger('change:'+attr, parent.get(attr));
+              parent.trigger('change');
+            });
+          }
 
           // propagate back if needed
           if (options.as && child[options.as] !== this)

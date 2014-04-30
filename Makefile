@@ -1,6 +1,6 @@
 sources = index.js $(wildcard lib/*.js)
 
-all: dist API.md
+all: API.md dist
 
 dist: dist/ento.js dist/ento.min.js verify stats
 
