@@ -437,6 +437,14 @@
       }
     },
 
+    /**
+     * (internal)
+     *
+     *     triggerChange({ title: 'x', bookAuthor: 'y' })
+     *
+     * emits 'change:title', 'change:bookAuthor', 'change:book_author', and
+     * 'change'
+     */
     triggerChange: function (attrs) {
       var self = this;
 
@@ -470,7 +478,26 @@
     get: function (attr) {
       if (arguments.length === 0)
         return this.export();
+      if (Array.isArray(attr))
+        return this.getMany(attr);
+      else if (typeof attr === 'object')
+        return this.getMany(_.keys(attr));
+      else
+        return this.getOne(attr);
+    },
 
+    getMany: function (attrs) {
+      var obj = {};
+      var self = this;
+
+      _.each(attrs, function (attr) {
+        obj[attr] = self.get(attr);
+      });
+
+      return obj;
+    },
+
+    getOne: function (attr) {
       var prop = this.constructor.attributes[attr];
 
       if (prop)

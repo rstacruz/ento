@@ -34,3 +34,13 @@ describe 'get', ->
 
     it '.get(str)', ->
       expect(instance.get('get')).eq 'x'
+
+  describe 'get (multi)', ->
+    beforeEach ->
+      instance = ento().build(a: 1, b: 2, c: 3)
+
+    it 'array', ->
+      expect(instance.get(['a','b'])).be.like { a: 1, b: 2 }
+
+    it 'object', ->
+      expect(instance.get(a: 0, b: 0)).be.like { a: 1, b: 2 }
