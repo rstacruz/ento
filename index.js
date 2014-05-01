@@ -409,10 +409,10 @@
       // use .setOne
       for (var k in attrs)
         if (attrs.hasOwnProperty(k))
-          this.setOne(k, attrs[k], options);
+          this.setOne(k, attrs[k], { silent: true });
 
       if (!options || !options.silent)
-        this.trigger('change', attrs);
+        this.triggerChange(attrs);
     },
 
     /**
@@ -431,17 +431,23 @@
       else this[key] = value;
 
       if (!options || !options.silent) {
-        var keys = _.uniq([key, camelize(key), underscored(key)]);
+        var opts = {};
+        opts[key] = value;
+        this.triggerChange(opts);
+      }
+    },
+
+    triggerChange: function (attrs) {
+      var self = this;
+
+      _.each(attrs, function (value, attr) {
+        var keys = _.uniq([attr, camelize(attr), underscored(attr)]);
         _.each(keys, function (key) {
           self.trigger('change:'+key, value);
         });
+      });
 
-        if (!options || !options.nochange) {
-          var changes = {};
-          changes[key] = value;
-          this.trigger('change', changes);
-        }
-      }
+      self.trigger('change', attrs);
     },
 
     /**
