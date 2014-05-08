@@ -451,11 +451,11 @@
       _.each(attrs, function (value, attr) {
         var keys = _.uniq([attr, camelize(attr), underscored(attr)]);
         _.each(keys, function (key) {
-          self.trigger('change:'+key, value);
+          self.trigger('change:'+key, key);
         });
       });
 
-      self.trigger('change', attrs);
+      self.trigger('change', _.keys(attrs));
     },
 
     /**

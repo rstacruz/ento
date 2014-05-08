@@ -34,22 +34,22 @@ describe 'change', ->
 
     it 'change:title', ->
       expect(changeTitle).calledOnce
-      expect(changeTitle).calledWith 'x'
+      expect(changeTitle).calledWith 'title'
       expect(changeTitle.firstCall.thisValue).eq book
 
     it 'change', ->
       expect(change).calledOnce
-      expect(change).calledWith title: 'x'
+      expect(change).calledWith ['title']
       expect(change.firstCall.thisValue).eq book
 
     it 'model change', ->
       expect(modelChange).calledOnce
-      expect(modelChange).calledWith title: 'x'
+      expect(modelChange).calledWith ['title']
       expect(modelChange.firstCall.thisValue).eq book
 
     it 'model change:title', ->
       expect(modelChangeTitle).calledOnce
-      expect(modelChangeTitle).calledWith 'x'
+      expect(modelChangeTitle).calledWith 'title'
       expect(modelChangeTitle.firstCall.thisValue).eq book
 
   describe '.set(object)', ->
@@ -58,18 +58,18 @@ describe 'change', ->
 
     it 'change:title', ->
       expect(changeTitle).calledOnce
-      expect(changeTitle).calledWith 'x'
+      expect(changeTitle).calledWith 'title'
 
     it 'change', ->
       expect(change).calledOnce
-      expect(change).calledWith title: 'x'
+      expect(change).calledWith ['title']
 
     it 'model change', ->
       expect(modelChange).calledOnce
 
     it 'model change:title', ->
       expect(modelChangeTitle).calledOnce
-      expect(modelChangeTitle).calledWith 'x'
+      expect(modelChangeTitle).calledWith 'title'
       expect(modelChangeTitle.firstCall.thisValue).eq book
 
   it '.set(k, v, silent)', ->
