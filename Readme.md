@@ -217,20 +217,6 @@ book.set('genre', 'fiction');
 book.set({ genre: 'fiction' });
 ```
 
-### States (to be implemented)
-
-```js
-book.is.fresh    // hasn't been modified since instanciation
-book.is.new      // has an ID
-book.is.busy     // is fetching/saving/deleting
-book.is.fetching // is currently fetching
-book.is.loaded   // has been fetched
-book.is.saving   // is currently saving
-book.is.deleting // is currently being deleted
-book.is.deleted  // has been deleted
-book.is.error    // persistence errors
-```
-
 ### Collections (to be implemented)
 
 ```js

@@ -6,6 +6,25 @@ Feature overview
 
 ### Change tracking
 
+Know when attributes change.
+
+```js
+var User = Ento()
+  .attr('firstName')
+  .attr('lastName');
+
+var me = new User();
+
+// when `firstName` changes
+me.on('change:firstName', function() { ... });
+
+// when anything changes
+me.on('change', function() { ... });
+
+// triggers the two events above
+me.firstName = "Jacques";
+```
+
 ### Case normalization
 
 ### Persistence
@@ -13,6 +32,31 @@ Feature overview
 ### Validations
 
 ### Relations
+
+### States
+
+When operations are done like [fetch()] or [save()], the state is saved into an 
+object called `is`.
+
+```js
+book.is.fresh    // hasn't been modified since instanciation
+book.is.new      // has an ID
+book.is.busy     // is fetching/saving/deleting
+book.is.fetching // is currently fetching
+book.is.loaded   // has been fetched
+book.is.saving   // is currently saving
+book.is.deleting // is currently being deleted
+book.is.deleted  // has been deleted
+book.is.error    // persistence errors
+```
+
+Change events are also triggered for this.
+
+```js
+book.on('change:is', function () {
+  // status has changed, do something
+});
+```
 
 Instances
 ---------
@@ -57,3 +101,7 @@ constructor.
 > .toJSON()
 
 Exports as a JSON-like object for serialization.
+
+[fetch()]: #fetch
+[save()]: #save
+
