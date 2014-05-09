@@ -4,21 +4,33 @@ Simple, stateful, observable objects in JavaScript. Yet another model library,
   but this one aims to make the API experience as close to *plain JavaScript 
   objects* as possible.
 
-Work-in-progress.
+```js
+var User = Ento()
+  .attr('id', Number)
+  .attr('firstName')
+  .attr('lastName');
+
+me = new User({ firstName: 'John', lastName: 'Coltrane' });
+
+me.firstName = 'Jacques';
+me.first_name;
+
+m.on('change', function (attrs) { ... });
+```
 
 - __Plain attributes__:
-No need for methods to get/set values (ie, *.get()* and *.set()*).  ECMAScript 
-getters and setters are used to listen for behavior on setting/getting 
-attributes.
+ECMAScript getters and setters are used to listen for updates in attributes.
+No need for methods like *.get()* and *.set()*.
+
+- __Change tracking__:
+Listen for changes in instances via `.on('change')`.
+
+- __Custom sync__:
+No persistence is built in (AJAX, SQL, etc). Implement it however you need it.
 
 - __Model states__:
 Keeps track of your model's state if it's fetching, or got an error. This is 
 useful when used with data-binding view libraries.
-
-- __Custom sync__:
-No persistence is built in. No AJAX, no SQL, no nothing. It makes no assumptions 
-on how you want to sync your data, and allows you to implement it however you 
-need it.
 
 - __Browser or Node.js__:
 Reuse the same business code in your client-side libs and your server-side libs.
@@ -30,43 +42,39 @@ is the Esperanto transation of the word "entity."
 
 ## API overview
 
-See [documentation](Documentation.md).
-
-```js
-var Name = Ento()
-  .attr('first')
-  .attr('last');
-
-me = new Name({ first: 'John', last: 'Coltrane' });
-
-me.first = 'Jacques';
-```
-
-Complicated example:
+__Computed properties:__ you can define properties that are derived from other 
+properties.
 
 ```js
 var Person = Ento()
-  .attr('id', Number)
-  .attr('first_name')
-  .attr('last_name')
-  .attr('full_name', ['first_name', 'last_name'], function () {
-    return [this.first_name, this.last_name].join(' ');
-  }) // computed properties
-  .use(Ento.persistence) // plugins
-  .use(Ento.validation)
-  .use({
-    introduce: function() {
-      alert("Hi, I'm " + this.fullName);
-    },
-    dance: function() {
-      alert("Whoa!");
-    }
+  .attr('firstName')
+  .attr('lastName')
+  .attr('fullName', ['firstName', 'lastName'], function () {
+    return [this.firstName, this.lastName].join(' ');
   });
 
 var me = new User({ firstName: "Miles", lastName: "Davis" });
-me.introduce();
-me.dance();
+
+me.fullName;
+=> "Miles Davis"
 ```
+
+__Plugins, and instance methods:__ create methods via `use()`.
+
+```js
+var Car = Ento()
+  .use(Ento.persistence) // plugins
+  .use(Ento.validation)
+  .use({
+    start: function () { ... },
+    drive: function () { ... }
+  });
+
+var civic = new Car();
+civic.start();
+```
+
+See the [documentation](Documentation.md) for even more features.
 
 ## What's it like?
 
@@ -77,29 +85,6 @@ me.dance();
      actually.)
  * It's like all of the above, with simpler syntax, and a use-only-what-you-need
  approach.
-
-### Feature comparison
-
-| Feature                | Ento    | Ember    | Backbone | Spine | Modella |
-|------------------------|---------|----------|----------|-------|---------|
-| Persistence            | ✓       | ✓        | ✓        | ✓     | ✓       |
-| Events                 | ✓       | ✓        | ✓        | ✓     | ✓       |
-| Validations            | ✓       | ✓        | ✓        | ✓     | ✓       |
-| Change tracking        | [✓][ct] | [✓][eob] | ✓        |       | ✓       |
-| Collections            | ✓       | ✓        | [✓][bcl] | ✓     |         |
-| Setters                | ✓       | ✓        |          |       | ✓       |
-| Computed properties    | [✓][cp] | [✓][ecp] |          |       |         |
-| Simple property syntax | ✓       |          |          |       |         |
-| Case normalization     | [✓][cn] |          |          |       |         |
-| Unknown properties     |         | [✓][eup] |          |       |         |
-
-[eup]: http://jfire.io/blog/2012/04/19/why-ember-dot-js-doesnt-use-property-descriptors/
-[eob]: http://emberjs.com/guides/object-model/observers/
-[ecp]: http://emberjs.com/guides/object-model/computed-properties/
-[bcl]: http://backbonejs.org/#Collection
-[cn]: #underscore-and-camelcase-normalization
-[ct]: #change-tracking
-[cp]: #computed-properties
 
 ## Acknowledgements
 

@@ -201,6 +201,76 @@ class Book extends Ento.object
     ...
 ```
 
+### Feature comparison
+
+Here's how Ento compares to other model libraries:
+
+| Feature                | Ento    | Ember    | Backbone | Spine | Modella |
+|------------------------|---------|----------|----------|-------|---------|
+| Persistence            | ✓       | ✓        | ✓        | ✓     | ✓       |
+| Events                 | ✓       | ✓        | ✓        | ✓     | ✓       |
+| Validations            | ✓       | ✓        | ✓        | ✓     | ✓       |
+| Change tracking        | [✓][ct] | [✓][eob] | ✓        |       | ✓       |
+| Collections            | ✓       | ✓        | [✓][bcl] | ✓     |         |
+| Setters                | ✓       | ✓        |          |       | ✓       |
+| Computed properties    | [✓][cp] | [✓][ecp] |          |       |         |
+| Simple property syntax | ✓       |          |          |       |         |
+| Case normalization     | [✓][cn] |          |          |       |         |
+| Unknown properties     |         | [✓][eup] |          |       |         |
+
+[eup]: http://jfire.io/blog/2012/04/19/why-ember-dot-js-doesnt-use-property-descriptors/
+[eob]: http://emberjs.com/guides/object-model/observers/
+[ecp]: http://emberjs.com/guides/object-model/computed-properties/
+[bcl]: http://backbonejs.org/#Collection
+[cn]: #underscore-and-camelcase-normalization
+[ct]: #change-tracking
+[cp]: #computed-properties
+
+Static methods
+--------------
+
+### Model.attr
+> .attr(name)
+
+Registers an attribute with the given `name`. This enables Ento-specific 
+features for that given attribute, including:
+
+ - __change tracking__ — you can listen for changes via `.on('change')`.
+
+ - __case normalization__ — attributes can be accessed using *under_scored_keys* 
+ or *camelCaseKeys*.
+
+```js
+var Article = Ento()
+  .attr('id', Number)
+  .attr('title')
+  .attr('body')
+```
+
+### Model.use
+> .use(object)
+
+Defines instance methods in the object.
+
+### Model.on
+> .on(event, fn)
+
+Listens for a given `event` in all instances, and runs the function `fn`.
+
+```js
+var Song = Ento()
+  .attr('title')
+  .on('change', function () { ... })
+  .on('play', function () { ... });
+```
+
+Events
+------
+
+### on('change')
+
+### on('change:attr')
+
 Instances
 ---------
 
