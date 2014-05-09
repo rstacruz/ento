@@ -114,6 +114,7 @@
 
   Objekt.attr = function (name) {
     var options = attrOptions.apply(this, arguments);
+    name = camelize(name);
 
     // save options into `Object.attributes`
     this.attributes[name] = options;
@@ -150,7 +151,6 @@
 
   function attrOptions(name) {
     var options = {};
-    name = camelize(name);
     options.name = name;
 
     for (var i=1, len=arguments.length; i<len; i++) {
@@ -178,6 +178,12 @@
 
     if (!options.set)
       options.set = function (value) { this.raw[name] = value; };
+
+    if (typeof options.via === 'string')
+      options.via = [options.via];
+
+    if (options.via)
+      options.via = options.via.map(camelize);
 
     return options;
   }

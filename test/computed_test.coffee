@@ -4,48 +4,56 @@ Name = null
 me = null
 
 describe 'computed properties', ->
-  beforeEach ->
-    Name = Ento()
-      .attr('first')
-      .attr('last')
-      .attr 'full', via: ['first','last'], ->
-        [@first, @last].join(' ')
+  describe 'definition', ->
+    it '.attr(name, [deps]) syntax', ->
+      Name = Ento()
+        .attr('full', ['first','last'], ->)
 
-    me = new Name(first: "Jack", last: "Harkness")
-    me
-      .on('change', spy('change'))
-      .on('change:last', spy('change:last'))
-      .on('change:full', spy('change:full'))
+      expect(Name.attributes.full.via).be.like ['first', 'last']
 
-  it 'works', ->
-    expect(me.full).eql "Jack Harkness"
+    it 'normalize cases', ->
+      Name = Ento()
+        .attr('full_name', ['first_name','lastName'], ->)
 
-  it 'Model.attributes', ->
-    expect(Name.attributes.full.via).be.like ['first', 'last']
+      expect(Name.attributes.fullName.via).be.like ['firstName', 'lastName']
 
-  it '.attr(name, [deps]) syntax', ->
-    Name = Ento()
-      .attr('full', ['first','last'], ->)
+  describe 'in practice', ->
+    beforeEach ->
+      Name = Ento()
+        .attr('first')
+        .attr('last')
+        .attr 'full', via: ['first', 'last'], ->
+          [@first, @last].join(' ')
 
-    expect(Name.attributes.full.via).be.like ['first', 'last']
+      me = new Name(first: "Jack", last: "Harkness")
+      me
+        .on('change', spy('change'))
+        .on('change:last', spy('change:last'))
+        .on('change:full', spy('change:full'))
 
-  it 'responds to change', ->
-    me.last = "Johnson"
-    expect(me.full).eql "Jack Johnson"
+    it 'works', ->
+      expect(me.full).eql "Jack Harkness"
 
-  it 'change event', ->
-    me.last = "Skelington"
-    expect(spy('change')).calledOnce
+    it 'Model.attributes', ->
+      expect(Name.attributes.full.via).be.like ['first', 'last']
 
-  it 'change event tells us what changed', ->
-    me.last = "Skelington"
-    expect(spy('change').firstCall.args[0]).like ['last']
+    it 'responds to change', ->
+      me.last = "Johnson"
+      expect(me.full).eql "Jack Johnson"
 
-  it 'change:attr event', ->
-    me.last = "Skelington"
-    expect(spy('change:last')).calledOnce
+    it 'change event', ->
+      me.last = "Skelington"
+      expect(spy('change')).calledOnce
 
-  xit 'change:attr event of the dynamic attr', ->
-    me.last = "Skelington"
-    expect(spy('change:full')).calledOnce
+    it 'change event tells us what changed', ->
+      me.last = "Skelington"
+      expect(spy('change').firstCall.args[0]).like ['last']
+
+    it 'change:attr event', ->
+      me.last = "Skelington"
+      expect(spy('change:last')).calledOnce
+
+    xit 'change:attr event of the dynamic attr', ->
+      me.last = "Skelington"
+      expect(spy('change:full')).calledOnce
 

@@ -64,17 +64,17 @@ describe 'Tests', ->
       expect(item.raw.title).eq 'hi'
 
     it 'adds to attributes', ->
-      expect(Object.keys(item.constructor.attributes)).be.like ['title', 'in_stock']
+      expect(Object.keys(item.constructor.attributes)).be.like ['title', 'inStock']
 
     it 'adds to attributes, 2', ->
-      expect(Object.keys(Book.attributes)).be.like ['title', 'in_stock']
+      expect(Object.keys(Book.attributes)).be.like ['title', 'inStock']
 
     it 'property definition', ->
       expect(Book.attributes.title).be.a 'object'
-      expect(Book.attributes.in_stock).be.a 'object'
+      expect(Book.attributes.inStock).be.a 'object'
 
     it 'attributeNames', ->
-      expect(Book.attributeNames()).be.like ['title', 'in_stock']
+      expect(Book.attributeNames()).be.like ['title', 'inStock']
 
     it 'triggers a change:title event', (done) ->
       item.on 'change:title', (key) ->
