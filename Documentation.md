@@ -4,6 +4,67 @@ ento.js
 Feature overview
 ----------------
 
+### Basic usage
+
+Running *Ento()* makes a new class, which you can instanciate. It should work 
+just like you'd expect a plain object to.
+
+```js
+var Ento = require('ento');
+
+// create a class
+var Album = Ento();
+
+// and instanciate it
+var album = new Album({
+  title: "Splenenie",
+  artist: "Maciej Tubis",
+  year: 2011
+});
+
+album.genre = 'jazz';
+
+console.log(album.year);
+```
+
+### Attributes
+
+Use *attr()* to define properties. This will enable features on those properties 
+such as change tracking, type coercion, and more.
+
+```js
+var Person = Ento()
+  .attr('id', Number)
+  .attr('firstName')
+  .attr('lastName')
+  .attr('address', String)
+  .attr('birthday', Date)
+  .attr('fullName', function () { return /*...*/; });
+
+var me = new Person({ firstName: "Frank", lastName: "Sinatra" });
+me.birthday = "1915-12-02T12:00:00Z";
+```
+
+Use attributes just like you would without Ento. No fancy syntax here.
+
+```js
+var Book = Ento()
+  .attr('genre');
+
+book = new Book();
+book.genre = 'fiction';
+book.genre; //=> 'fiction'
+```
+
+Non-explicit attributes also work, but they will not be tracked for changes.
+
+```js
+Book = Ento();
+book = new Book();
+
+book.isbn = "00123";
+```
+
 ### Change tracking
 
 Know when attributes change.
@@ -25,7 +86,43 @@ me.on('change', function() { ... });
 me.firstName = "Jacques";
 ```
 
-### Case normalization
+### Computed properties
+
+```js
+var Name = Ento()
+  .attr('fullname', function () {
+      return [this.first, this.last].join(' ');
+  });
+
+var me = new Name({
+  first: 'John',
+  last: 'Coltrane'
+});
+
+me.fullname; // => 'John Coltrane'
+```
+
+### Underscore and camelcase normalization
+
+Both camelcase and underscores are available for attributes. This reconciles a 
+common problem of having the backend (eg, Rails) have *underscored* conventions, 
+       while .js files tend to have *camelCase* conventions.
+
+```js
+var User = Ento()
+  .attr('firstName')
+  .attr('lastName');
+
+var me = new User({
+  firstName: 'Dexter',
+  last_name: 'Morgan'
+});
+
+me.first_name = "Dexter";
+
+me.first_name; //=> "Dexter"
+me.firstName;  //=> "Dexter"
+```
 
 ### Persistence
 
@@ -56,6 +153,52 @@ Change events are also triggered for this.
 book.on('change:is', function () {
   // status has changed, do something
 });
+```
+
+### Methods
+
+*use()* adds to the prototype. This allows you to add plugins, or add your 
+instance variables.
+
+```js
+var Person = Ento()
+  .use(Ento.persistence) // plugin
+  .use(Ento.validation)  // plugin
+  .use({
+    introduce: function() {
+      alert("Hi, I'm " + this.name);
+    }
+    dance: function() {
+      alert("Whoa!");
+    }
+  });
+
+var me = new User({ name: "Miles Davis" });
+me.introduce();
+me.dance();
+```
+
+### Collections (to be implemented)
+
+```js
+Books = Ento()
+  .use(Ento.collection);
+
+books = new Books();
+books.set([ {...}, {...} ]);
+books.items
+books.each(...)
+```
+
+### CoffeeScript support
+
+```coffee
+class Book extends Ento.object
+  @attr 'title'
+  @attr 'genre'
+
+  burn: ->
+    ...
 ```
 
 Instances

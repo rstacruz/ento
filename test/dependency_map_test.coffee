@@ -12,7 +12,7 @@ describe 'dependency map', ->
 
   it 'dependents, deep', ->
     items = @deps.dependents('nick')
-    expect(items).like ['first', 'full']
+    expect(items).like ['full', 'first']
 
   xit 'dependencies', ->
     items = @deps.dependencies('first')
