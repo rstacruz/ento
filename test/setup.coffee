@@ -9,6 +9,10 @@ before ->
 beforeEach -> global.sinon = require('sinon').sandbox.create()
 afterEach  -> global.sinon.restore()
 
+beforeEach ->
+  spies = {}
+  global.spy = (name) -> spies[name] ?= sinon.spy()
+
 before ->
   if process.env.distfile?
     global.ento = require('../' + process.env.distfile)

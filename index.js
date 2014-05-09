@@ -49,6 +49,7 @@
   Ento.exportable = require('./lib/exportable');
   Ento.relations = require('./lib/relations')(_, camelize);
   Ento.ractiveAdaptor = require('./lib/ractive_adaptor')(_);
+  var Depmap = require('./lib/dependency_map');
 
   /***
    * Object:
@@ -79,6 +80,12 @@
      */
 
     this.attributes = {};
+
+    /**
+     * deps: dependency map for stuff
+     */
+
+    this.deps = new Depmap();
   };
 
   Objekt.extended();
@@ -148,7 +155,9 @@
 
     for (var i=1, len=arguments.length; i<len; i++) {
       var arg = arguments[i];
-      if (typeof arg === 'object') {
+      if (Array.isArray(arg)) {
+        options.via = arg;
+      } else if (typeof arg === 'object') {
         _.extend(options, arg);
       } else if (~[Number, String, Date, Boolean].indexOf(arg)) {
         options.type = arg;
