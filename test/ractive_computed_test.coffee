@@ -11,7 +11,7 @@ describe 'ractive computed properties', ->
     Name = Ento()
       .attr('first')
       .attr('last')
-      .attr('full', ['first','last'], -> [@first, @last].join(' '))
+      .attr('full', ['first', 'last'], -> [@first, @last].join(' '))
 
   beforeEach 'instanciate it', ->
     user = new Name(first: "Jack", last: "Frost")
@@ -30,29 +30,27 @@ describe 'ractive computed properties', ->
     user.last = "Johnson"
     expect(document.body.innerHTML).eql '<div>Jack Johnson</div>'
 
-  it 'ractive.set should propagate to the model', ->
-    view.set('user.last', 'Crawford')
-    expect(user.full).eql 'Jack Crawford'
+  describe 'ractive.set', ->
+    beforeEach ->
+      view.set('user.last', 'Crawford')
 
-  it 'ractive.set should rerender computed fields', ->
-    view.set('user.last', 'Black')
-    expect(document.body.innerHTML).eql '<div>Jack Black</div>'
+    it 'should propagate to the model', ->
+      expect(user.full).eql 'Jack Crawford'
 
-  it 'ractive reset', ->
-    view.set('user', { first: 'Harry', last: 'Lemon' })
-    expect(document.body.innerHTML).eql '<div>Harry Lemon</div>'
+    it 'should rerender computed fields', ->
+      expect(document.body.innerHTML).eql '<div>Jack Crawford</div>'
 
-  it 'ractive reset with an ento object', ->
-    view.set('user', new Name(first: 'Harry', last: 'Lemon'))
-    expect(document.body.innerHTML).eql '<div>Harry Lemon</div>'
+  describe 'ractive reset', ->
+    it 'should work with set(object)', ->
+      view.set('user', { first: 'Harry', last: 'Lemon' })
+      expect(document.body.innerHTML).eql '<div>Harry Lemon</div>'
 
-  describe 'teardown should unbind event handlers', ->
-    it 'remove the change handler', ->
-      expect(user._events.change).not.be.undefined
-      view.teardown()
-      expect(user._events.change).be.undefined
+    it 'should work with set(ento object)', ->
+      view.set('user', new Name(first: 'Harry', last: 'Lemon'))
+      expect(document.body.innerHTML).eql '<div>Harry Lemon</div>'
 
-    it 'leave another change handler unharmed', ->
+  describe 'teardown', ->
+    it 'unbind change handlers', ->
       user.on 'change', ->
       expect(user._events.change).have.length 2
       view.teardown()
