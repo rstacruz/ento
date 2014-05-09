@@ -38,6 +38,14 @@ describe 'ractive computed properties', ->
     view.set('user.last', 'Black')
     expect(document.body.innerHTML).eql '<div>Jack Black</div>'
 
+  it 'ractive reset', ->
+    view.set('user', { first: 'Harry', last: 'Lemon' })
+    expect(document.body.innerHTML).eql '<div>Harry Lemon</div>'
+
+  it 'ractive reset with an ento object', ->
+    view.set('user', new Name(first: 'Harry', last: 'Lemon'))
+    expect(document.body.innerHTML).eql '<div>Harry Lemon</div>'
+
   describe 'teardown should unbind event handlers', ->
     it 'remove the change handler', ->
       expect(user._events.change).not.be.undefined

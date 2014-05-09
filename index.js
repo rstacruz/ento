@@ -96,6 +96,13 @@
   _.extend(Objekt, Ento.events);
 
   /**
+   * ento:
+   * A fingerprint to indentify Ento-enabled objects.
+   */
+
+  Objekt.ento = true;
+
+  /**
    * attr : attr(name, [...])
    * Registers an attribute.
    *
