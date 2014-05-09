@@ -1,2 +1,2 @@
 --compilers coffee:coffee-script/register
--R spec
+-R min
