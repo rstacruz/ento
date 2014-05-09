@@ -35,5 +35,17 @@ describe 'ractive computed properties', ->
     expect(user.full).eql 'Jack Crawford'
 
   it 'ractive.set should rerender computed fields', ->
-    view.set('user.last', 'Crawford')
-    expect(document.body.innerHTML).eql '<div>Jack Crawford</div>'
+    view.set('user.last', 'Black')
+    expect(document.body.innerHTML).eql '<div>Jack Black</div>'
+
+  describe 'teardown should unbind event handlers', ->
+    it 'remove the change handler', ->
+      expect(user._events.change).not.be.undefined
+      view.teardown()
+      expect(user._events.change).be.undefined
+
+    it 'leave another change handler unharmed', ->
+      user.on 'change', ->
+      expect(user._events.change).have.length 2
+      view.teardown()
+      expect(user._events.change).have.length 1
