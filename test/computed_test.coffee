@@ -57,3 +57,40 @@ describe 'computed properties', ->
       me.last = "Skelington"
       expect(spy('change:full')).calledOnce
 
+
+  describe 'deep dependencies', ->
+    beforeEach ->
+      Name = Ento()
+        .attr('first')
+        .attr('surname')
+        .attr('suffix')
+
+        .attr 'last', ['surname', 'suffix'], ->
+          [@surname, @suffix].join(' ')
+
+        .attr 'full', via: ['first', 'last'], ->
+          [@first, @last].join(' ')
+
+      me = new Name(first: "Jack", surname: "Harkness", suffix: 'III')
+
+    it 'should work', ->
+      expect(me.last).eql "Harkness III"
+
+    it 'should work, deep', ->
+      expect(me.full).eql "Jack Harkness III"
+
+    it 'should trigger change', ->
+      me.on('change:suffix', spy('suffix'))
+      me.on('change:last', spy('last'))
+      me.on('change:full', spy('full'))
+
+      me.suffix = "Sr."
+      expect(spy('suffix')).calledOnce
+      expect(spy('last')).calledOnce
+      expect(spy('full')).calledOnce
+
+    it 'change attrs', ->
+      me.on('change', spy('change'))
+
+      me.suffix = "Sr."
+      expect(spy('change').firstCall.args[0]).be.like ['suffix', 'full', 'last']
