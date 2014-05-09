@@ -295,7 +295,7 @@ module.exports = function (_) {
     var obj = {};
     var attrs = this.constructor.attributes;
 
-    // attragate attributes
+    // attributes
     for (var attr in attrs) {
       if (attrs.hasOwnProperty(attr)) {
         var options = attrs[attr];
@@ -419,6 +419,109 @@ module.exports = function (_, camelize) {
   };
 };
 })();return module.exports;})())(_, camelize);
+  Ento.ractiveAdaptor = ((function(){var module={exports:{}},exports=module.exports;(function(){module.exports = function (_) {
+  return {
+    filter: function (object, keypath, ractive) {
+      return (object && object.on && object.off && object.set && object.get);
+    },
+
+    wrap: function (ractive, object, keypath, prefixer) {
+      var ignore;
+
+      // On object change => update the view.
+      // If vars are given, take it into account.
+      object.on('change', function (vars) {
+        if (vars) {
+          ignore = true;
+          ractive.set(prefixer(object.get(vars)));
+        } else {
+          ractive.update(keypath);
+        }
+      }, ractive);
+
+      return {
+        // Return all things.
+        get: function () {
+          return object.get();
+        },
+
+        // On deletion, remove the event handler.
+        teardown: function () {
+          object.off(null, null, ractive);
+        },
+
+        // Propagate from DOM to object. (to do)
+        set: function (key, val) {
+          if (ignore) { ignore = false; return; }
+          object.set(key, val);
+        },
+
+        // Don't mind this right now
+        reset: function (data) {
+          return false;
+        }
+
+      };
+    }
+  };
+};
+})();return module.exports;})())(_);
+  var Depmap = ((function(){var module={exports:{}},exports=module.exports;(function(){
+
+var Depmap = module.exports = function () {
+  this.ltr = {};
+  this.rtl = {};
+};
+
+Depmap.prototype = {
+  add: function (left, right) {
+    var ltr = this.ltr, rtl = this.rtl;
+    if (!ltr[left]) ltr[left] = {};
+
+    each(right, function (right) {
+      if (!rtl[right]) rtl[right] = {};
+      ltr[left][right] = true;
+      rtl[right][left] = true;
+    });
+  },
+
+  dependencies: function (items) {
+    return this.traverse(this.ltr, items);
+  },
+
+  dependents: function (items) {
+    return this.traverse(this.rtl, items);
+  },
+
+  traverse: function (mapping, items) {
+    if (typeof items === 'string') items = [items];
+
+    var obj = {}, self = this;
+    each(items, function (item) {
+      obj[item] = true;
+      self.traverseKeys(obj, mapping, item);
+    });
+
+    return Object.keys(obj);
+  },
+
+  traverseKeys: function (re, mapping, item) {
+    var self = this;
+
+    each(mapping[item], function (val, key) {
+      re[key] = self.traverseKeys(re, mapping, key);
+    });
+
+    return re;
+  }
+};
+
+function each (list, fn) {
+  if (list)
+    for (var key in list)
+      if (list.hasOwnProperty(key)) fn(list[key], key);
+}
+})();return module.exports;})());
 
   
 
@@ -434,6 +537,10 @@ module.exports = function (_, camelize) {
     
 
     this.attributes = {};
+
+    
+
+    this.deps = new Depmap();
   };
 
   Objekt.extended();
@@ -444,13 +551,17 @@ module.exports = function (_, camelize) {
 
   Objekt.attr = function (name) {
     var options = attrOptions.apply(this, arguments);
+    name = camelize(name);
 
     // save options into `Object.attributes`
     this.attributes[name] = options;
 
+    // add to dependency map
+    if (options.via) this.deps.add(name, options.via);
+
     // defineProperty as needed, on both camel and underscore.
     // skip anything that already exists in the prototype.
-    var names = _.uniq([ name, camelize(name), underscored(name) ]);
+    var names = _.uniq([ name, underscored(name) ]);
     var setter = function (value) { this.setOne(name, value); };
     for (var i=0, len=names.length; i<len; i++) {
       if (this.prototype[names[i]]) continue;
@@ -468,12 +579,13 @@ module.exports = function (_, camelize) {
 
   function attrOptions(name) {
     var options = {};
-    name = camelize(name);
     options.name = name;
 
     for (var i=1, len=arguments.length; i<len; i++) {
       var arg = arguments[i];
-      if (typeof arg === 'object') {
+      if (Array.isArray(arg)) {
+        options.via = arg;
+      } else if (typeof arg === 'object') {
         _.extend(options, arg);
       } else if (~[Number, String, Date, Boolean].indexOf(arg)) {
         options.type = arg;
@@ -494,6 +606,12 @@ module.exports = function (_, camelize) {
 
     if (!options.set)
       options.set = function (value) { this.raw[name] = value; };
+
+    if (typeof options.via === 'string')
+      options.via = [options.via];
+
+    if (options.via)
+      options.via = options.via.map(camelize);
 
     return options;
   }
@@ -565,6 +683,7 @@ module.exports = function (_, camelize) {
 })();return module.exports;})())(_);
 
   Objekt.use(Ento.events);
+  Objekt.use(Ento.exportable);
 
   
 
@@ -644,10 +763,10 @@ module.exports = function (_, camelize) {
       // use .setOne
       for (var k in attrs)
         if (attrs.hasOwnProperty(k))
-          this.setOne(k, attrs[k], options);
+          this.setOne(k, attrs[k], { silent: true });
 
       if (!options || !options.silent)
-        this.trigger('change', attrs);
+        this.triggerChange(attrs);
     },
 
     
@@ -663,22 +782,54 @@ module.exports = function (_, camelize) {
       else this[key] = value;
 
       if (!options || !options.silent) {
-        var keys = _.uniq([key, camelize(key), underscored(key)]);
-        _.each(keys, function (key) {
-          self.trigger('change:'+key, value);
-        });
-
-        if (!options || !options.nochange) {
-          var changes = {};
-          changes[key] = value;
-          this.trigger('change', changes);
-        }
+        var opts = {};
+        opts[key] = value;
+        this.triggerChange(opts);
       }
+    },
+
+    
+    triggerChange: function (attrs) {
+      var self = this;
+
+      // find all dependent computed properties
+      var all = this.constructor.deps.dependents(_.keys(attrs));
+
+      _.each(all, function (attr) {
+        var keys = _.uniq([attr, underscored(attr)]);
+        _.each(keys, function (key) {
+          self.trigger('change:'+key, key);
+        });
+      });
+
+      self.trigger('change', all);
     },
 
     
 
     get: function (attr) {
+      if (arguments.length === 0)
+        return this.export();
+      if (Array.isArray(attr))
+        return this.getMany(attr);
+      else if (typeof attr === 'object')
+        return this.getMany(_.keys(attr));
+      else
+        return this.getOne(attr);
+    },
+
+    getMany: function (attrs) {
+      var obj = {};
+      var self = this;
+
+      _.each(attrs, function (attr) {
+        obj[attr] = self.get(attr);
+      });
+
+      return obj;
+    },
+
+    getOne: function (attr) {
       var prop = this.constructor.attributes[attr];
 
       if (prop)
