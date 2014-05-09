@@ -24,11 +24,11 @@ describe 'ractive computed properties', ->
       data: { user: user }
 
   it 'should work', ->
-    expect(document.body.innerHTML).eql '<div>Jack Frost</div>'
+    expect(html()).eql '<div>Jack Frost</div>'
 
   it 'changes the DOM when an update happens', ->
     user.last = "Johnson"
-    expect(document.body.innerHTML).eql '<div>Jack Johnson</div>'
+    expect(html()).eql '<div>Jack Johnson</div>'
 
   describe 'ractive.set', ->
     beforeEach ->
@@ -38,20 +38,4 @@ describe 'ractive computed properties', ->
       expect(user.full).eql 'Jack Crawford'
 
     it 'should rerender computed fields', ->
-      expect(document.body.innerHTML).eql '<div>Jack Crawford</div>'
-
-  describe 'ractive reset', ->
-    it 'should work with set(object)', ->
-      view.set('user', { first: 'Harry', last: 'Lemon' })
-      expect(document.body.innerHTML).eql '<div>Harry Lemon</div>'
-
-    it 'should work with set(ento object)', ->
-      view.set('user', new Name(first: 'Harry', last: 'Lemon'))
-      expect(document.body.innerHTML).eql '<div>Harry Lemon</div>'
-
-  describe 'teardown', ->
-    it 'unbind change handlers', ->
-      user.on 'change', ->
-      expect(user._events.change).have.length 2
-      view.teardown()
-      expect(user._events.change).have.length 1
+      expect(html()).eql '<div>Jack Crawford</div>'
