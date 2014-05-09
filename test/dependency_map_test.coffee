@@ -6,18 +6,40 @@ describe 'dependency map', ->
     @deps.add 'full', ['first', 'last']
     @deps.add 'first', ['prefix', 'nick']
 
-  it 'dependents', ->
-    items = @deps.dependents('first')
-    expect(items).like ['full']
+  describe 'dependents', ->
+    it 'simple', ->
+      items = @deps.dependents('first')
+      expect(items).like ['first', 'full']
 
-  it 'dependents, deep', ->
-    items = @deps.dependents('nick')
-    expect(items).like ['full', 'first']
+    it 'deep', ->
+      items = @deps.dependents('nick')
+      expect(items).like ['nick', 'full', 'first']
 
-  xit 'dependencies', ->
-    items = @deps.dependencies('first')
-    expect(items).like ['prefix', 'nick']
+    it 'array', ->
+      items = @deps.dependents(['nick'])
+      expect(items).like ['nick', 'full', 'first']
 
-  xit 'dependencies, deep', ->
-    items = @deps.dependencies('full')
-    expect(items).like ['first', 'last', 'prefix', 'nick']
+    it 'array with dupes', ->
+      items = @deps.dependents(['nick', 'nick'])
+      expect(items).like ['nick', 'full', 'first']
+
+    it 'nonexistent', ->
+      items = @deps.dependents('middle')
+      expect(items).like ['middle']
+
+  describe 'dependencies', ->
+    it 'simple', ->
+      items = @deps.dependencies('first')
+      expect(items).like ['first', 'prefix', 'nick']
+
+    it 'array', ->
+      items = @deps.dependencies(['first', 'last'])
+      expect(items).like ['first', 'prefix', 'nick', 'last']
+
+    it 'deep', ->
+      items = @deps.dependencies('full')
+      expect(items).like ['full', 'prefix', 'nick', 'first', 'last']
+
+    it 'nonexistent', ->
+      items = @deps.dependencies('suffix')
+      expect(items).like ['suffix']
