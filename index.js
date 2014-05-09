@@ -46,11 +46,11 @@
   Ento._ = _;
   Ento.camelize = camelize;
   Ento.underscored = underscored;
-  Ento.events = require('./lib/events')(_);
-  Ento.persistence = require('./lib/persistence')(_);
-  Ento.collection = require('./lib/collection')(_);
+  Ento.events = require('./lib/events')(Ento);
+  Ento.persistence = require('./lib/persistence')(Ento);
+  Ento.collection = require('./lib/collection')(Ento);
   Ento.exportable = require('./lib/exportable');
-  Ento.relations = require('./lib/relations')(_, camelize);
+  Ento.relations = require('./lib/relations')(Ento);
   Ento.ractiveAdaptor = require('./lib/ractive_adaptor')(Ento);
   var Depmap = require('./lib/dependency_map');
 
@@ -417,7 +417,11 @@
 
     set: function (key, value, options) {
       // handle objects (.set({...}))
-      if (typeof key === 'object')
+      if (_.isArray(key)) {
+        if (!this.setArray)
+          throw new Error("Ento.set: use Ento.collection to handle arrays");
+        return this.setArray(key);
+      } else if (typeof key === 'object')
         return this.setMany(key, value);
       else
         return this.setOne(key, value, options);
