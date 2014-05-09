@@ -119,9 +119,12 @@
     // save options into `Object.attributes`
     this.attributes[name] = options;
 
+    // add to dependency map
+    if (options.via) this.deps.add(name, options.via);
+
     // defineProperty as needed, on both camel and underscore.
     // skip anything that already exists in the prototype.
-    var names = _.uniq([ name, camelize(name), underscored(name) ]);
+    var names = _.uniq([ name, underscored(name) ]);
     var setter = function (value) { this.setOne(name, value); };
     for (var i=0, len=names.length; i<len; i++) {
       if (this.prototype[names[i]]) continue;
@@ -463,8 +466,11 @@
     triggerChange: function (attrs) {
       var self = this;
 
-      _.each(attrs, function (value, attr) {
-        var keys = _.uniq([attr, camelize(attr), underscored(attr)]);
+      // find all dependent computed properties
+      var all = this.constructor.deps.dependents(_.keys(attrs));
+
+      _.each(all, function (attr) {
+        var keys = _.uniq([attr, underscored(attr)]);
         _.each(keys, function (key) {
           self.trigger('change:'+key, key);
         });

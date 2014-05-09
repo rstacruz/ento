@@ -53,7 +53,7 @@ describe 'computed properties', ->
       me.last = "Skelington"
       expect(spy('change:last')).calledOnce
 
-    xit 'change:attr event of the dynamic attr', ->
+    it 'change:attr event of the dynamic attr', ->
       me.last = "Skelington"
       expect(spy('change:full')).calledOnce
 
