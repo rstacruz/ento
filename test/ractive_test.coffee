@@ -1,5 +1,6 @@
 require './setup'
 
+Person = null
 user = null
 view = null
 
@@ -14,11 +15,12 @@ describe 'ractive', ->
     view.set x: 'hello'
     expect(document.body.innerHTML).eql '<div>hello</div>'
 
-  beforeEach ->
-    user = Ento()
+  beforeEach 'try to build', ->
+    Person = Ento()
       .use(Ento.exportable)
       .attr('name')
-      .build(name: "Jack", lastname: "Frost")
+
+    user = new Person(name: "Jack", lastname: "Frost")
 
   it 'works with ractive by default', ->
     view = new Ractive
