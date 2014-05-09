@@ -4,13 +4,7 @@ user = null
 view = null
 
 describe 'ractive', ->
-  require('./support/jsdom')()
-
-  before ->
-    global.Ractive = require('ractive')
-
-  before ->
-    global.Ractive.adaptors.ento = Ento.ractiveAdaptor
+  require('./support/ractive')()
 
   it 'ensure ractive works', ->
     view = new Ractive

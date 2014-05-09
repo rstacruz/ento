@@ -47,7 +47,7 @@ describe 'computed properties', ->
 
     it 'change event tells us what changed', ->
       me.last = "Skelington"
-      expect(spy('change').firstCall.args[0]).like ['last']
+      expect(spy('change').firstCall.args[0]).like ['last', 'full']
 
     it 'change:attr event', ->
       me.last = "Skelington"

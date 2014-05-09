@@ -476,7 +476,7 @@
         });
       });
 
-      self.trigger('change', _.keys(attrs));
+      self.trigger('change', all);
     },
 
     /**
