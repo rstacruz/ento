@@ -29,3 +29,11 @@ describe 'ractive computed properties', ->
   it 'changes the DOM when an update happens', ->
     user.last = "Johnson"
     expect(document.body.innerHTML).eql '<div>Jack Johnson</div>'
+
+  it 'ractive.set should propagate to the model', ->
+    view.set('user.last', 'Crawford')
+    expect(user.full).eql 'Jack Crawford'
+
+  it 'ractive.set should rerender computed fields', ->
+    view.set('user.last', 'Crawford')
+    expect(document.body.innerHTML).eql '<div>Jack Crawford</div>'

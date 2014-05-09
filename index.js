@@ -43,6 +43,9 @@
    * etc
    */
 
+  Ento._ = _;
+  Ento.camelize = camelize;
+  Ento.underscored = underscored;
   Ento.events = require('./lib/events')(_);
   Ento.persistence = require('./lib/persistence')(_);
   Ento.collection = require('./lib/collection')(_);
