@@ -5,15 +5,33 @@ me = null
 
 describe 'computed properties', ->
   describe 'definition', ->
-    it '.attr(name, [deps]) syntax', ->
+    it '.attr(name, deps, fn) syntax', ->
       Name = Ento()
         .attr('full', ['first','last'], ->)
 
       expect(Name.attributes.full.via).be.like ['first', 'last']
 
+    it '.attr(name, fn, deps) syntax', ->
+      Name = Ento()
+        .attr('full', (->), ['first','last'])
+
+      expect(Name.attributes.full.via).be.like ['first', 'last']
+
+    it '.attr(name, fn, via: deps) syntax', ->
+      Name = Ento()
+        .attr('full', (->), via: ['first','last'])
+
+      expect(Name.attributes.full.via).be.like ['first', 'last']
+
+    it '.attr(name, via: deps, fn) syntax', ->
+      Name = Ento()
+        .attr('full', via: ['first','last'], ->)
+
+      expect(Name.attributes.full.via).be.like ['first', 'last']
+
     it 'normalize cases', ->
       Name = Ento()
-        .attr('full_name', ['first_name','lastName'], ->)
+        .attr('full_name', ['first_name', 'lastName'], ->)
 
       expect(Name.attributes.fullName.via).be.like ['firstName', 'lastName']
 
