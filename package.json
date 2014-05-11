@@ -1,9 +1,10 @@
 {
   "name": "ento",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Simple, stateful, observable objects in JavaScript.",
   "main": "index.js",
   "scripts": {
+    "prepublish": "make",
     "test": "mocha",
     "autotest": "mocha --watch -b -R min",
     "coverage": "cp index.js index.js~; (jscoverage lib; mv lib lib~; mv lib-cov lib; jscoverage index.js; mv index-cov.js index.js; mocha -R html-cov > coverage.html); rm -rf lib index.js; mv lib~ lib; mv index.js~ index.js"

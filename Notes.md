@@ -1,10 +1,13 @@
 Developer notes
 ===============
 
-Update documentation:
-
-    make API.md
-
 Build:
 
     make
+
+Releasing:
+
+    bump *.json *.js
+    make
+    git changelog
+    git release 0.1.2

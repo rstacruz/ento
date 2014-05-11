@@ -578,6 +578,8 @@
     }
   });
 
+  Ento.version = "0.0.1";
+
   return Ento;
 
 }));
