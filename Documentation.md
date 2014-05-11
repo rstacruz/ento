@@ -226,10 +226,25 @@ Here's how Ento compares to other model libraries:
 [ct]: #change-tracking
 [cp]: #computed-properties
 
+Hello
+-----
+
+### Ento
+
+Subclasses [Ento.object].
+
+```js
+var Model = Ento();
+```
+
+### Ento.object
+
+The parent class of everything.
+
 Static methods
 --------------
 
-### Model.attr
+### Object.attr
 > .attr(name)
 
 Registers an attribute with the given `name`. This enables Ento-specific 
@@ -247,12 +262,22 @@ var Article = Ento()
   .attr('body')
 ```
 
-### Model.use
+Can be called as:
+
+```js
+attr('name')
+attr('name', function(), Array) // computed properties
+attr('name', function(), function())
+attr('name', String|Boolean|Date|Number) // coercion
+attr('name', { options })
+```
+
+### Object.use
 > .use(object)
 
 Defines instance methods in the object.
 
-### Model.on
+### Object.on
 > .on(event, fn)
 
 Listens for a given `event` in all instances, and runs the function `fn`.
@@ -263,6 +288,104 @@ var Song = Ento()
   .on('change', function () { ... })
   .on('play', function () { ... });
 ```
+
+### Object.extend
+> extend([props])
+
+Subclasses [Ento.object] into a new class. This creates a new
+subclass that inherits all of the parent class's methods,
+attributes and event listeners.
+
+```js
+var Shape = Ento();
+var Circle = Shape.extend();
+```
+
+A more detailed example: using *.extend()* in a model with
+attributes creates a new model with the same attributes, allowing
+you to build on top of another model.
+
+```js
+var Address = Ento()
+  .attr('street')
+  .attr('city')
+  .attr('zip');
+
+ var ApartmentAddress = Address.extend()
+   .attr('unit')
+   .attr('apartment');
+```
+
+You may also pass an object to *.extend()*. This will use those
+objects as properties, like Backbone. This is functionally
+equivalent to *.extend().use({...})*.
+
+```js
+var User = Ento();
+var Admin = User.extend({
+  lol: function() { ... }
+});
+```
+
+### Object.attributes
+
+An object that lists attributes registered with [attr()].
+
+```js
+Page = Eton.extend()
+  .attr('title')
+  .attr('slug');
+
+Page.attributes.title
+=> { name: 'title', get: [Function], set: [Function], ... }
+
+Page.attributes.slug
+=> { name: 'slug', get: [Function], set: [Function], ... }
+```
+
+### Object.attributeNames
+
+Returns property names. Also see [attributes].
+
+```js
+Name = ento()
+  .attr('first')
+  .attr('last');
+
+Name.attributeNames();
+=> ['first', 'last']
+```
+
+### Object.build
+> build([props])
+
+Constructs a new instance. Calling *Model.build()* is functionally-equivalent to
+*new Model()*, and is provided for convenience.
+
+```js
+var Album = Ento()
+  .attr('title')
+  .attr('year', Number);
+
+var item = Album.build({
+  title: 'Kind of Blue',
+  year: 1984
+ });
+```
+
+This allows you to create singletons:
+
+```js
+var Screen = Ento()
+  .prop('width')
+  .prop('height')
+  .prop('ratio', function() { ... }, ['width', 'height'])
+  .build({
+    width: 200,
+    height: 300
+  });
+```
+
 
 Events
 ------
@@ -310,11 +433,11 @@ doc.get('title', 'author');
 Triggers an event `event`. Also triggers the event in the
 constructor.
 
-### intsance.toJSON
+### instance.toJSON
 > .toJSON()
 
 Exports as a JSON-like object for serialization.
 
 [fetch()]: #fetch
 [save()]: #save
-
+[Ento.object]: #ento-object
