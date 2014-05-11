@@ -1,6 +1,6 @@
 sources = index.js $(wildcard lib/*.js)
 
-all: API.md dist
+all: dist
 
 dist: dist/ento.js dist/ento.min.js verify stats
 
@@ -17,8 +17,5 @@ stats:
 	@echo "  loc:   " `cat dist/ento.js | wc -l`
 	@echo "  min:   " `cat dist/ento.min.js | wc -c` b
 	@echo "  min.gz:" `cat dist/ento.min.js | gzip | wc -c` b
-
-API.md: index.js lib/persistence.js lib/relations.js
-	cat $^ | mdextract > $@
 
 .PHONY: verify stats
