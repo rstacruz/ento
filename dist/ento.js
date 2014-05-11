@@ -63,9 +63,14 @@ exports.underscored = function (str) {
 
   
 
+  Ento._ = _;
+  Ento.camelize = camelize;
+  Ento.underscored = underscored;
   Ento.events = ((function(){var module={exports:{}},exports=module.exports;(function(){var slice = [].slice;
 
-module.exports = function (_) {
+module.exports = function (Ento) {
+  var _ = Ento._;
+
   // Backbone.Events
   // ---------------
 
@@ -234,8 +239,10 @@ module.exports = function (_) {
 
   return Events;
 };
-})();return module.exports;})())(_);
-  Ento.persistence = ((function(){var module={exports:{}},exports=module.exports;(function(){module.exports = function (_) {
+})();return module.exports;})())(Ento);
+  Ento.persistence = ((function(){var module={exports:{}},exports=module.exports;(function(){module.exports = function (Ento) {
+  var _ = Ento._;
+
   return function (model) {
     model
       .on('init', function () {
@@ -281,12 +288,57 @@ module.exports = function (_) {
     }
   };
 };
-})();return module.exports;})())(_);
-  Ento.collection = ((function(){var module={exports:{}},exports=module.exports;(function(){module.exports = function (_) {
-  return function() {
+})();return module.exports;})())(Ento);
+  Ento.collection = ((function(){var module={exports:{}},exports=module.exports;(function(){module.exports = function (Ento) {
+  var _ = Ento._;
+
+  return function(Model) {
+    Model.attr('items');
+
+    // length
+    Model.attr('length', ['items'], function () {
+      return this.items && this.items.length || 0;
+    });
+
+    Model.on('init', function () {
+      this.raw.items = [];
+    });
+
+    Model.use({
+      setArray: function (list) {
+        // to do
+        this.set('items', list);
+      },
+
+      push: function (item) { },
+      pop: function (options) { },
+      shift: function (options) { },
+      unshift: function (options) { },
+      slice: function () { },
+      at: function (idx) {
+        return this.get('items')[idx];
+      }
+    });
+
+    // use underscore methods
+    var methods = ['forEach', 'each', 'map', 'collect', 'reduce', 'foldl',
+      'inject', 'reduceRight', 'foldr', 'find', 'detect', 'filter', 'select',
+      'reject', 'every', 'all', 'some', 'any', 'include', 'contains', 'invoke',
+      'max', 'min', 'toArray', 'size', 'first', 'head', 'take', 'initial', 'rest',
+      'tail', 'drop', 'last', 'without', 'difference', 'indexOf', 'shuffle',
+      'lastIndexOf', 'isEmpty', 'chain', 'sample'];
+
+    _.each(methods, function(method) {
+      Model.prototype[method] = function() {
+        var args = [].slice.call(arguments);
+        args.unshift(this.get('items') || []);
+        return _[method].apply(_, args);
+      };
+    });
+
   };
 };
-})();return module.exports;})())(_);
+})();return module.exports;})())(Ento);
   Ento.exportable = ((function(){var module={exports:{}},exports=module.exports;(function(){module.exports = {
 
   
@@ -315,7 +367,9 @@ module.exports = function (_) {
 })();return module.exports;})());
   Ento.relations = ((function(){var module={exports:{}},exports=module.exports;(function(){
 
-module.exports = function (_, camelize) {
+module.exports = function (Ento) {
+  var _ = Ento._;
+
   return function (model) {
 
     
@@ -336,7 +390,7 @@ module.exports = function (_, camelize) {
     
     
     function hasOneAttribute (attr, options, klass, exportable) {
-      attr = camelize(attr);
+      attr = Ento.camelize(attr);
 
       model.attr(attr, {
         set: function (value) {
@@ -392,7 +446,7 @@ module.exports = function (_, camelize) {
     
     
     function hasOneId (attr, options, klass) {
-      attr = camelize(attr);
+      attr = Ento.camelize(attr);
       var attrId = attr + 'Id';
 
       model.attr(attrId, {
@@ -418,11 +472,11 @@ module.exports = function (_, camelize) {
 
   };
 };
-})();return module.exports;})())(_, camelize);
-  Ento.ractiveAdaptor = ((function(){var module={exports:{}},exports=module.exports;(function(){module.exports = function (_) {
+})();return module.exports;})())(Ento);
+  Ento.ractiveAdaptor = ((function(){var module={exports:{}},exports=module.exports;(function(){module.exports = function (Ento) {
   return {
     filter: function (object, keypath, ractive) {
-      return (object && object.on && object.off && object.set && object.get);
+      return object instanceof Ento.object;
     },
 
     wrap: function (ractive, object, keypath, prefixer) {
@@ -450,22 +504,28 @@ module.exports = function (_, camelize) {
           object.off(null, null, ractive);
         },
 
-        // Propagate from DOM to object. (to do)
+        // Propagate from DOM to object.
         set: function (key, val) {
           if (ignore) { ignore = false; return; }
           object.set(key, val);
         },
 
-        // Don't mind this right now
+        // When you do .set and the keypath is identical
         reset: function (data) {
-          return false;
+          if (typeof data !== 'object')
+            throw new Error("Ento.ractiveAdaptor: not sure what to do");
+
+          if (data instanceof Ento.object)
+            return false;
+
+          object.set(data);
         }
 
       };
     }
   };
 };
-})();return module.exports;})())(_);
+})();return module.exports;})())(Ento);
   var Depmap = ((function(){var module={exports:{}},exports=module.exports;(function(){
 
 var Depmap = module.exports = function () {
@@ -546,6 +606,10 @@ function each (list, fn) {
   Objekt.extended();
 
   _.extend(Objekt, Ento.events);
+
+  
+
+  Objekt.ento = true;
 
   
 
@@ -746,7 +810,11 @@ function each (list, fn) {
 
     set: function (key, value, options) {
       // handle objects (.set({...}))
-      if (typeof key === 'object')
+      if (_.isArray(key)) {
+        if (!this.setArray)
+          throw new Error("Ento.set: use Ento.collection to handle arrays");
+        return this.setArray(key);
+      } else if (typeof key === 'object')
         return this.setMany(key, value);
       else
         return this.setOne(key, value, options);
