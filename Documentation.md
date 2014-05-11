@@ -1,13 +1,29 @@
 ento.js
 =======
 
+Installation
+------------
+
+Bower:
+
+    bower install ento
+
+NPM:
+
+    npm install ento
+
+Download:
+
+ * [ento.js](https://github.com/rstacruz/ento/raw/master/dist/ento.js)
+ * [ento.min.js](https://github.com/rstacruz/ento/raw/master/dist/ento.min.js)
+
 Feature overview
 ----------------
 
 ### Basic usage
 
-Running *Ento()* makes a new class, which you can instanciate. It should work 
-just like you'd expect a plain object to.
+__Creating classes:__ Running *Ento()* makes a new class, which you can 
+instanciate.  It should work just like you'd expect a plain object to.
 
 ```js
 var Ento = require('ento');
@@ -29,8 +45,11 @@ console.log(album.year);
 
 ### Attributes
 
-Use *attr()* to define properties. This will enable features on those properties 
+__Defining properties:__
+Use [attr()] to define properties. This will enable features on those properties 
 such as change tracking, type coercion, and more.
+
+[Reference: attr() >][attr()]
 
 ```js
 var Person = Ento()
@@ -40,11 +59,9 @@ var Person = Ento()
   .attr('address', String)
   .attr('birthday', Date)
   .attr('fullName', function () { return /*...*/; });
-
-var me = new Person({ firstName: "Frank", lastName: "Sinatra" });
-me.birthday = "1915-12-02T12:00:00Z";
 ```
 
+__Setting and getting:__
 Use attributes just like you would without Ento. No fancy syntax here.
 
 ```js
@@ -56,7 +73,52 @@ book.genre = 'fiction';
 book.genre; //=> 'fiction'
 ```
 
-Non-explicit attributes also work, but they will not be tracked for changes.
+__Constructors:__ you can pass attribute values into constructors.
+
+```js
+var me = new Person({
+  firstName: "Frank",
+  lastName: "Sinatra"
+});
+```
+
+__.set:__
+You may also use [set()]. This is a method provided for convenience to allow you 
+to set multiple values.
+
+```js
+book.set('genre', 'mystery');
+book.set({ genre: 'mystery' });
+```
+
+__.get:__
+You can use [get()] to values from a single attribute or multiple attributes.
+
+```js
+book.get('genre')
+=> "mystery"
+
+book.get(['title', 'genre'])
+=> { title: "Mockingjay", genre: "teens" }
+```
+
+__Type coercion:__
+You can specify if an attribute is a *String*, *Number*, *Boolean* or *Date*. In 
+these cases, the values are ensured to be stored in these types.
+
+```js
+User = Ento()
+  .attr('birthday', Date);
+
+me.birthday = "1915-12-02T12:00:00Z";
+
+me.birthday
+=> [object Date]
+```
+
+__Non-explicit attributes:__
+You may also use the object for attributes not defined via [attr()], but they 
+will not be tracked for changes.
 
 ```js
 Book = Ento();
@@ -147,7 +209,8 @@ book.is.deleted  // has been deleted
 book.is.error    // persistence errors
 ```
 
-Change events are also triggered for this.
+__Change events:__
+change events are also triggered for this.
 
 ```js
 book.on('change:is', function () {
@@ -192,12 +255,18 @@ books.each(...)
 
 ### CoffeeScript support
 
+[Ento.object] is a plain JavaScript class. As such, you can use [Coffeescript]'s 
+classes construct to create Ento model classes.
+
 ```coffee
 class Book extends Ento.object
+  @use Ento.persistence
   @attr 'title'
   @attr 'genre'
+  @attr 'fullTitle', ['title', 'author'], ->
+    "'#{@title}' by #{@author}"
 
-  burn: ->
+  buy: (price) ->
     ...
 ```
 
@@ -438,10 +507,6 @@ constructor.
 
 Exports as a JSON-like object for serialization.
 
-[fetch()]: #fetch
-[save()]: #save
-[Ento.object]: #ento-object
-
 Ento.relations
 --------------
 
@@ -527,3 +592,12 @@ book.author_id //=> 3
 ### Object.hasMany
 
 To be documented.
+
+[set()]: #instance-set
+[get()]: #instance-get
+[fetch()]: #instance-fetch
+[save()]: #instance-save
+[attr()]: #object-attr
+[Ento.object]: #ento-object
+
+[Coffeescript]: http://coffeescript.org
