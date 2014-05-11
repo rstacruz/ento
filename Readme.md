@@ -40,6 +40,12 @@ is the Esperanto transation of the word "entity."
 
 [![Status](https://travis-ci.org/rstacruz/ento.svg?branch=master)](https://travis-ci.org/rstacruz/ento)
 
+## Get it
+
+Ento depends on [underscore.js], and is available via Bower and NPM.
+
+See [documentation] for better instructions.
+
 ## API overview
 
 __Computed properties:__ you can define properties that are derived from other 
@@ -74,7 +80,7 @@ var civic = new Car();
 civic.start();
 ```
 
-See the [documentation](Documentation.md) for even more features.
+See the [documentation] for even more features.
 
 ## What's it like?
 
@@ -96,3 +102,5 @@ Contains code from Backbone.js.
 [Ember]: http://emberjs.org
 [Backbone]: http://backbonejs.org
 [Spine]: http://spinejs.com
+[underscore.js]: http://underscorejs.org
+[documentation]: Documentation.md

@@ -365,31 +365,29 @@ module.exports = function (Ento) {
 };
 
 })();return module.exports;})());
-  Ento.relations = ((function(){var module={exports:{}},exports=module.exports;(function(){
-
-module.exports = function (Ento) {
+  Ento.relations = ((function(){var module={exports:{}},exports=module.exports;(function(){module.exports = function (Ento) {
   var _ = Ento._;
 
   return function (model) {
 
     
  
-    model.hasOne = function (attr, options, klass) {
-      hasOneAttribute(attr, options, klass, true);
+    model.hasOne = function (attr, klass, options) {
+      hasOneAttribute(attr, klass, options, true);
       return this;
     };
 
     
     
-    model.belongsTo = function (attr, options, klass) {
-      hasOneAttribute(attr, options, klass, false);
-      hasOneId(attr, options, klass);
+    model.belongsTo = function (attr, klass, options) {
+      hasOneAttribute(attr, klass, options, false);
+      hasOneId(attr, klass, options);
       return this;
     };
 
     
     
-    function hasOneAttribute (attr, options, klass, exportable) {
+    function hasOneAttribute (attr, klass, options, exportable) {
       attr = Ento.camelize(attr);
 
       model.attr(attr, {
@@ -408,16 +406,16 @@ module.exports = function (Ento) {
 
           // .author = 12345
           if (typeof value !== 'object')
-            throw new Error("not an object");
+            throw new Error("Ento.relation: not an object");
 
           // .author = { ... } - instanciate as needed
           // .author = Author(...)
           if (value.constructor === Object)
-            child = new (klass())(value);
-          else if (value instanceof klass())
+            child = new klass(value);
+          else if (value instanceof klass)
             child = value;
           else
-            throw new Error("invalid type");
+            throw new Error("Ento.relation: not an instance of the given class");
 
           // set model instance (`.author = ...`)
           this.raw[attr] = child;
@@ -445,7 +443,7 @@ module.exports = function (Ento) {
       
     
     
-    function hasOneId (attr, options, klass) {
+    function hasOneId (attr, klass, options) {
       attr = Ento.camelize(attr);
       var attrId = attr + 'Id';
 
@@ -935,6 +933,8 @@ function each (list, fn) {
       return object;
     }
   });
+
+  Ento.version = "0.0.1";
 
   return Ento;
 

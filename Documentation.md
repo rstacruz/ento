@@ -4,18 +4,20 @@ ento.js
 Installation
 ------------
 
-Bower:
-
-    bower install ento
-
-NPM:
-
-    npm install ento
+Ento depends on [underscore.js].
 
 Download:
 
  * [ento.js](https://github.com/rstacruz/ento/raw/master/dist/ento.js)
  * [ento.min.js](https://github.com/rstacruz/ento/raw/master/dist/ento.min.js)
+
+Bower:
+
+    bower install ento
+
+NPM (for use in Webpack or Browserify):
+
+    npm install --save ento
 
 Feature overview
 ----------------
@@ -601,3 +603,4 @@ To be documented.
 [Ento.object]: #ento-object
 
 [Coffeescript]: http://coffeescript.org
+[underscore.js]: http://underscorejs.org
