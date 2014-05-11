@@ -441,3 +441,21 @@ Exports as a JSON-like object for serialization.
 [fetch()]: #fetch
 [save()]: #save
 [Ento.object]: #ento-object
+
+Ento.relations
+--------------
+
+### Usage
+
+```js
+Author = Ento()
+Book = Ento()
+
+Author
+  .use(Ento.relations)
+  .belongsTo('book', Book)
+
+Book
+  .use(Ento.relations)
+  .hasOne('author', Author, { as: 'book' })
+```

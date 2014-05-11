@@ -14,7 +14,7 @@ describe 'has one change', ->
     Album = Ento()
       .use(Ento.relations)
       .attr('id')
-      .hasOne('song', as: 'album', Song)
+      .hasOne('song', Song, as: 'album')
 
   describe 'propagate change event of children', ->
     beforeEach ->
