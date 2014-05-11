@@ -20,6 +20,18 @@ describe 'Tests', ->
       item = new Book(title: "Hello")
       expect(item.title).eq "Hello"
 
+  describe 'instanceof', ->
+    it 'true for the given class', ->
+      Book = ento()
+      item = new Book()
+      expect(item instanceof Book).be.true
+
+    it 'true for a subclass', ->
+      Book = ento()
+      Novel = Book.extend()
+      item = new Novel()
+      expect(item instanceof Novel).be.true
+
   describe 'set', ->
     it 'mass set', ->
       Book = ento()

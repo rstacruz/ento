@@ -17,7 +17,7 @@ describe 'hasOne + belongsTo', ->
     Book = Ento()
       .use(Ento.relations)
       .attr('id')
-      .belongsTo('author', as: 'book', -> Author)
+      .belongsTo('author', as: 'book', Author)
 
   # ----
   describe 'fresh', ->
@@ -109,7 +109,8 @@ describe 'hasOne + belongsTo', ->
       expect(book.author).be.instanceOf Author
       expect(book.author.id).eql 200
 
-    it 'stop listening to old one', ->
+    it.only 'stop listening to old one', ->
+      book = new Book(author: {id: 12})
       previous = book.author
       book.author = new Author(id: 10)
       expect(book.authorId).eql 10
@@ -119,7 +120,7 @@ describe 'hasOne + belongsTo', ->
   # ---
   describe 'bidirectional', ->
     beforeEach ->
-      Author.belongsTo('book', as: 'author', -> Book)
+      Author.belongsTo('book', as: 'author', Book)
       book = new Book(id: 10, author: { name: 'JK', id: 3 })
       author = book.author
 
@@ -140,7 +141,7 @@ describe 'hasOne + belongsTo', ->
 
   describe 'hasOne', ->
     beforeEach ->
-      Author.hasOne('book', as: 'author', -> Book)
+      Author.hasOne('book', as: 'author', Book)
       book = new Book(author: { name: 'JK', id: 3 })
       author = book.author
 
