@@ -447,6 +447,8 @@ Ento.relations
 
 ### Usage
 
+You can describe relations using [hasOne], [hasMany], and [belongsTo].
+
 ```js
 Author = Ento()
 Book = Ento()
@@ -459,3 +461,69 @@ Book
   .use(Ento.relations)
   .hasOne('author', Author, { as: 'book' })
 ```
+
+### Object.hasOne
+> .hasOne(attribute, class, [options])
+
+Creates a relation. See [Ento.relations] for an example.
+
+The `options` parameter can have:
+
+* `as` *String* — the name of the attribute in the child class that
+describes the inverse relationship.
+
+__Class:__ The parameter `class` is an Ento model.
+
+```js
+Question = Ento()
+  .use(Ento.relations)
+  .hasOne('answer', Answer, {as: 'question'});
+```
+
+__Automatic instanciation:__ This creates a custom attribute. When set, it will 
+automatically instanciate it.
+
+```js
+q = new Question({ title: 'Why is the sky blue?' });
+q.answer = { body: 'It reflects the ocean' };
+
+(q.answer instanceof Answer)
+=> true
+```
+
+__Inverse:__ If `as` is given, the child will be updated to have a link to the
+parent. This means that in the sub-class (*Answer* in this case), you can have 
+access to its parent (*Question*). In the example above, you can:
+
+```js
+q = new Question({ title: 'Why is the sky blue?' });
+q.answer = { body: 'It reflects the ocean' };
+
+// `.question` is automatically set, because of `as: 'question'`
+q.answer.question == q
+```
+
+Another example:
+
+```js
+book.author = { id: 3, name: 'Jake' }
+book.author       // is of type `Person`
+book.author.book  // link to parent `book`
+```
+
+### Object.belongsTo
+> belongsTo(attribute, class, [options])
+
+Creates a relation. Works exactly like [hasOne], but also accounts for a
+*child_id* attribute.
+
+See [Object.hasOne] for documentation on how *belongsTo* works.
+
+```js
+book.author = { id: 3, name: 'John' }
+book.author_id //=> 3
+```
+
+### Object.hasMany
+
+To be documented.
