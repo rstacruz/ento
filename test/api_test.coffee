@@ -27,6 +27,13 @@ describe 'api', ->
       instance = new Model()
       expect(instance.api.foo).eql 300
 
+    it 'modifying the global API after subclassing', ->
+      db2 = { foo: 300 }
+
+      Model = Ento()
+      Ento.object.api(db2)
+      expect(Model.api()).eq db2
+
     it "modifying api in model doesn't affect others", ->
       db2 = { foo: 300 }
 
