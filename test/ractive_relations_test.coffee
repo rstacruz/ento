@@ -38,10 +38,20 @@ describe 'Ractive: relations', ->
     data = book.get()
     expect(data.author).instanceOf Author
 
-  it 'yeah', ->
-    view = new Ractive
-      data: { book: book }
-      adapt: 'ento'
-      template: "<div>{{ book.title }} by {{ book.author.full }}</div>"
+  describe 'rendering', ->
+    beforeEach ->
+      view = new Ractive
+        data: { book: book }
+        adapt: 'ento'
+        template: "<div>{{ book.title }} by {{ book.author.full }}</div>"
 
-    expect(view.toHTML()).include 'Pelican Brief by John Grisham'
+    it 'initial render', ->
+      expect(view.toHTML()).include 'Pelican Brief by John Grisham'
+
+    it 'attribute changes in the top level', ->
+      book.title = 'Sycamore Row'
+      expect(view.toHTML()).include 'Sycamore Row by John Grisham'
+
+    it 'attribute changes in the child', ->
+      book.author.last = 'Chase'
+      expect(view.toHTML()).include 'Pelican Brief by John Chase'

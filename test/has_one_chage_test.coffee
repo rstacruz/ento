@@ -33,3 +33,4 @@ describe 'has one change', ->
       parent.on('change', spy)
       parent.song.title = 'Party in the USA'
       expect(spy).calledOnce
+      expect(spy.firstCall.args).be.like ['title']
