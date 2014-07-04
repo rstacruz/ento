@@ -389,6 +389,7 @@ module.exports = function (Ento) {
     
     function hasOneAttribute (attr, klass, options, exportable) {
       attr = Ento.camelize(attr);
+      if (!options) options = {};
 
       model.attr(attr, {
         set: function (value) {
@@ -425,13 +426,14 @@ module.exports = function (Ento) {
           if (exportable) {
             this.listenTo(child, 'change', function () {
               parent.trigger('change:'+attr, parent.get(attr));
-              parent.trigger('change');
+              parent.trigger('change', [attr]);
             });
           }
 
           // propagate back if needed
-          if (options.as && child[options.as] !== this)
-            child[options.as] = this;
+          var inverse = options.as || options.inverse;
+          if (inverse && child[inverse] !== this)
+            child[inverse] = this;
 
           return;
         },
@@ -472,6 +474,8 @@ module.exports = function (Ento) {
 };
 })();return module.exports;})())(Ento);
   Ento.ractiveAdaptor = ((function(){var module={exports:{}},exports=module.exports;(function(){module.exports = function (Ento) {
+  var _ = Ento._;
+
   return {
     filter: function (object, keypath, ractive) {
       return object instanceof Ento.object;
@@ -485,7 +489,7 @@ module.exports = function (Ento) {
       object.on('change', function (vars) {
         if (vars) {
           ignore = true;
-          ractive.set(prefixer(object.get(vars)));
+          ractive.set(prefixer(getScalars(object, vars)));
         } else {
           ractive.update(keypath);
         }
@@ -522,6 +526,20 @@ module.exports = function (Ento) {
       };
     }
   };
+
+  
+
+  function getScalars (object, vars) {
+    var values = {};
+
+    _.each(vars, function (key) {
+      var value = object.get(key);
+      if (!(value instanceof Ento.object))
+        values[key] = value;
+    });
+
+    return values;
+  }
 };
 })();return module.exports;})())(Ento);
   var Depmap = ((function(){var module={exports:{}},exports=module.exports;(function(){
