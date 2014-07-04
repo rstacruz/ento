@@ -1,11 +1,12 @@
+(function(){
 (function(root, factory) {
 
   if (typeof define === 'function' && define.amd) {
-    define(['underscore'], factory); 
+    define(['underscore'], factory); /* AMD */
   } else if (typeof exports === 'object') {
-    module.exports = factory(underscore()); 
+    module.exports = factory(underscore()); /* CommonJS */
   } else {
-    root.Ento = factory(underscore()); 
+    root.Ento = factory(underscore()); /* Globals */
   }
 
   function underscore() {
@@ -19,15 +20,29 @@
 
   var Objekt;
 
-  
+  /***
+   * Ento:
+   * Creates a model subclass.
+   *
+   *     var Model = Ento();
+   */
 
   function Ento() {
     return Objekt.extend();
   }
 
-  
+  /*
+   * utilities
+   */
 
-  var coerce = ((function(){var module={exports:{}},exports=module.exports;(function(){
+  var coerce = (function(){var module={exports:{}},exports=module.exports;(function(){/**
+ * coerce : coerce(value, type)
+ * (internal) coerces a `value` into a type `type`.
+ *
+ *     coerce("200", Number);   => 200
+ *     coerce(200, String);     => "200"
+ *     coerce("yes", Boolean);  => true
+ */
 
 module.exports = function (value, type) {
   if (value === null || typeof value === 'undefined') return value;
@@ -49,24 +64,26 @@ module.exports = function (value, type) {
     }
   }
 };
-})();return module.exports;})());
-  var stringUtils = ((function(){var module={exports:{}},exports=module.exports;(function(){exports.camelize = function (str) {
+})();return module.exports;}());
+  var stringUtils = (function(){var module={exports:{}},exports=module.exports;(function(){exports.camelize = function (str) {
   return str.trim().replace(/[-_\s]+(.)?/g, function (match, c) { return c.toUpperCase(); });
 };
 
 exports.underscored = function (str) {
   return str.trim().replace(/([a-z\d])([A-Z]+)/g, '$1_$2').replace(/[\.-\s]+/g, '_').toLowerCase();
 };
-})();return module.exports;})());
+})();return module.exports;}());
   var camelize = stringUtils.camelize;
   var underscored = stringUtils.underscored;
 
-  
+  /*
+   * etc
+   */
 
   Ento._ = _;
   Ento.camelize = camelize;
   Ento.underscored = underscored;
-  Ento.events = ((function(){var module={exports:{}},exports=module.exports;(function(){var slice = [].slice;
+  Ento.events = (function(){var module={exports:{}},exports=module.exports;(function(){var slice = [].slice;
 
 module.exports = function (Ento) {
   var _ = Ento._;
@@ -239,8 +256,8 @@ module.exports = function (Ento) {
 
   return Events;
 };
-})();return module.exports;})())(Ento);
-  Ento.persistence = ((function(){var module={exports:{}},exports=module.exports;(function(){module.exports = function (Ento) {
+})();return module.exports;}())(Ento);
+  Ento.persistence = (function(){var module={exports:{}},exports=module.exports;(function(){module.exports = function (Ento) {
   var _ = Ento._;
 
   return function (model) {
@@ -288,8 +305,8 @@ module.exports = function (Ento) {
     }
   };
 };
-})();return module.exports;})())(Ento);
-  Ento.collection = ((function(){var module={exports:{}},exports=module.exports;(function(){module.exports = function (Ento) {
+})();return module.exports;}())(Ento);
+  Ento.collection = (function(){var module={exports:{}},exports=module.exports;(function(){module.exports = function (Ento) {
   var _ = Ento._;
 
   return function(Model) {
@@ -338,10 +355,13 @@ module.exports = function (Ento) {
 
   };
 };
-})();return module.exports;})())(Ento);
-  Ento.exportable = ((function(){var module={exports:{}},exports=module.exports;(function(){module.exports = {
+})();return module.exports;}())(Ento);
+  Ento.exportable = (function(){var module={exports:{}},exports=module.exports;(function(){module.exports = {
 
-  
+  /**
+   * export : export()
+   * exports all attributes into an object, including dynamic attributes.
+   */
 
   export: function() {
     var obj = {};
@@ -364,20 +384,44 @@ module.exports = function (Ento) {
   }
 };
 
-})();return module.exports;})());
-  Ento.relations = ((function(){var module={exports:{}},exports=module.exports;(function(){module.exports = function (Ento) {
+})();return module.exports;}());
+  Ento.relations = (function(){var module={exports:{}},exports=module.exports;(function(){module.exports = function (Ento) {
   var _ = Ento._;
 
   return function (model) {
 
-    
+    /**
+     * hasOne : hasOne(attribute, class, options)
+     * Creates a relation. See [Relations] for an example.
+     *
+     * The `options` parameter can have:
+     *
+     * ~ as (string): the name of the attribute in the child class that
+     * describes the inverse relationship.
+     *
+     *   book.author = { id: 3, name: 'Jake' }
+     *   book.author       // is of type `Person`
+     *   book.author.book  // link to parent `book`
+     *     
+     */
  
     model.hasOne = function (attr, klass, options) {
       hasOneAttribute(attr, klass, options, true);
       return this;
     };
 
-    
+    /**
+     * belongsTo : belongsTo(attribute, options, class)
+     * Creates a relation. Works exactly like [hasOne], but also accounts for a
+     * *child_id* attribute.
+     *
+     *   Book = Ento()
+     *     .use(Ento.relations)
+     *     .belongsTo('author', Author)
+     *
+     *   book.author = { id: 3, name: 'John' }
+     *   book.author_id //=> 3
+     */
     
     model.belongsTo = function (attr, klass, options) {
       hasOneAttribute(attr, klass, options, false);
@@ -385,7 +429,9 @@ module.exports = function (Ento) {
       return this;
     };
 
-    
+    /*
+     * creates the attribute 'attr' representing the sub-object
+     */
     
     function hasOneAttribute (attr, klass, options, exportable) {
       attr = Ento.camelize(attr);
@@ -443,7 +489,9 @@ module.exports = function (Ento) {
       });
     }
       
-    
+    /*
+     * (internal) creates a `attr_id` attribute
+     */
     
     function hasOneId (attr, klass, options) {
       attr = Ento.camelize(attr);
@@ -472,8 +520,8 @@ module.exports = function (Ento) {
 
   };
 };
-})();return module.exports;})())(Ento);
-  Ento.ractiveAdaptor = ((function(){var module={exports:{}},exports=module.exports;(function(){module.exports = function (Ento) {
+})();return module.exports;}())(Ento);
+  Ento.ractiveAdaptor = (function(){var module={exports:{}},exports=module.exports;(function(){module.exports = function (Ento) {
   var _ = Ento._;
 
   return {
@@ -527,7 +575,9 @@ module.exports = function (Ento) {
     }
   };
 
-  
+  /*
+   * get all things that are not Ento objects
+   */
 
   function getScalars (object, vars) {
     var values = {};
@@ -541,8 +591,15 @@ module.exports = function (Ento) {
     return values;
   }
 };
-})();return module.exports;})())(Ento);
-  var Depmap = ((function(){var module={exports:{}},exports=module.exports;(function(){
+})();return module.exports;}())(Ento);
+  var Depmap = (function(){var module={exports:{}},exports=module.exports;(function(){/*
+ * Dependency mapping.
+ *
+ *   var deps = new Depmap();
+ *   deps.add('fullname', ['firstname', 'lastname']); // adds item and dependencies
+ *   deps.dependents('firstname'); #=> fullname
+ *   deps.dependencies('fullname'); #=> firstname, lastname
+ */
 
 var Depmap = module.exports = function () {
   this.ltr = {};
@@ -597,9 +654,11 @@ function each (list, fn) {
     for (var key in list)
       if (list.hasOwnProperty(key)) fn(list[key], key);
 }
-})();return module.exports;})());
+})();return module.exports;}());
 
-  
+  /***
+   * Object:
+   */
 
   Ento.object = Objekt = function (options) {
     // giving `false` means the .build() step should be bypassed.
@@ -610,11 +669,26 @@ function each (list, fn) {
 
   Objekt.extended = function () {
 
-    
+    /**
+     * attributes : Object
+     * List of attributes registered with [attr()].
+     *
+     *   Page = Eton.extend()
+     *     .attr('title')
+     *     .attr('slug');
+     *
+     *   Page.attributes.title
+     *   => { name: 'title', get: [Function], set: [Function], ... }
+     *
+     *   Page.attributes.slug
+     *   => { name: 'slug', get: [Function], set: [Function], ... }
+     */
 
     this.attributes = {};
 
-    
+    /**
+     * deps: dependency map for stuff
+     */
 
     this.deps = new Depmap();
   };
@@ -623,11 +697,32 @@ function each (list, fn) {
 
   _.extend(Objekt, Ento.events);
 
-  
+  /**
+   * ento:
+   * A fingerprint to indentify Ento-enabled objects.
+   */
 
   Objekt.ento = true;
 
-  
+  /**
+   * attr : attr(name, [...])
+   * Registers an attribute.
+   *
+   * Can be called as:
+   *
+   *   attr('name')
+   *   attr('name', function())
+   *   attr('name', function(), function())
+   *   attr('name', String|Boolean|Date|Number)
+   *   attr('name', { options })
+   *
+   * Possible options:
+   *
+   * ~ get: getter function
+   * ~ set: setter function
+   * ~ type: type to coerce to. can be String | Boolean | Date | Number
+   * ~ enumerable: shows up in keys. (default: true)
+   */
 
   Objekt.attr = function (name) {
     var options = attrOptions.apply(this, arguments);
@@ -655,7 +750,19 @@ function each (list, fn) {
     return this;
   };
 
-  
+  /*
+   * attrOptions:
+   * (internal) parses arguments passed onto `.attr` to create an options hash,
+   * filling in defaults as needed.
+   *
+   *   {
+   *     get: function() { ... }, // *
+   *     set: function() { ... }, // *
+   *     enumerable: true, // *
+   *     type: String,
+   *   },
+   *   // * - always there, even if not explicitly passed to .attr.
+   */
 
   function attrOptions(name) {
     var options = {};
@@ -696,13 +803,57 @@ function each (list, fn) {
     return options;
   }
 
-  
+  /**
+   * attributeNames:
+   * returns property names.
+   *
+   *   Name = ento()
+   *     .attr('first')
+   *     .attr('last');
+   *
+   *   Name.attributeNames();
+   *   => ['first', 'last']
+   */
 
   Objekt.attributeNames = function () {
     return _.keys(this.attributes);
   };
 
-  
+  /**
+   * use : use(...)
+   * uses a mixin.
+   * Extends the model with a given plugin. When passed an *Object*, the
+   * prototype is extended with it (see first example). When passed a
+   * *Function*, it is called and passed the model as the first parameter,
+   * allowing you to extend the model in any way.
+   *
+   * ~ use(props, [staticProps]) :
+   *   extends the prototype with `props` (*Object*). optionally, you can pass
+   *   `staticProps` too to extend the object itself.
+   * ~ use(fn) :
+   *   call `fn` (*Function*), passing the model as the first argument. This
+   *   allows you to extend the class in whatever way you wish.
+   *
+   * An example of using `.use()` with an *Object*:
+   *
+   *   var Person = ento()
+   *     .attr('name')
+   *     .use({
+   *       greet: function() {
+   *         alert("Hello, " + this.name);
+   *       }
+   *     })
+   *
+   * An example of using `.use()` with a *Function*:
+   *
+   *   var Timestamps = function (model) {
+   *     model
+   *       .attr('createdAt')
+   *       .attr('updatedAt');
+   *   }
+   *
+   *   var Record = ento().use(Timestamps);
+   */
 
   Objekt.use = function (props, staticProps) {
     if (!props && arguments.length === 1) {
@@ -721,9 +872,39 @@ function each (list, fn) {
     return this;
   };
 
-  
+  /**
+   * extend : extend([props])
+   * Subclasses [ento.object] into a new class. This creates a new
+   * subclass that inherits all of the parent class's methods,
+   * attributes and event listeners.
+   *
+   *   var Shape = Ento();
+   *   var Circle = Shape.extend();
+   *
+   * A more detailed example: using *.extend()* in a model with
+   * attributes creates a new model with the same attributes, allowing
+   * you to build on top of another model.
+   *
+   *   var Address = Ento()
+   *     .attr('street')
+   *     .attr('city')
+   *     .attr('zip');
+   *
+   *    var ApartmentAddress = Address.extend()
+   *      .attr('unit')
+   *      .attr('apartment');
+   *
+   * You may also pass an object to *.extend()*. This will use those
+   * objects as properties, like Backbone. This is functionally
+   * equivalent to *.extend().use({...})*.
+   *
+   *   var User = Ento();
+   *   var Admin = User.extend({
+   *     lol: function() { ... }
+   *   });
+   */
 
-  Objekt.extend = ((function(){var module={exports:{}},exports=module.exports;(function(){module.exports = function (_) {
+  Objekt.extend = (function(){var module={exports:{}},exports=module.exports;(function(){module.exports = function (_) {
   return function (protoProps, staticProps) {
     var parent = this;
     var child;
@@ -760,12 +941,22 @@ function each (list, fn) {
     return child;
   };
 };
-})();return module.exports;})())(_);
+})();return module.exports;}())(_);
 
   Objekt.use(Ento.events);
   Objekt.use(Ento.exportable);
 
-  
+  /**
+   * api : api()
+   * sets or gets the api object.
+   *
+   *   var db = {
+   *     sync: function(){ ... }
+   *   };
+   *
+   *   Model = Ento()
+   *     .api(db);
+   */
 
   Objekt.api = function (value) {
     if (!arguments.length) return this.prototype.api;
@@ -773,7 +964,20 @@ function each (list, fn) {
     return this;
   };
 
-  
+  /**
+   * build : build([props])
+   * constructor. Calling *Model.build()* is functionally-equivalent to
+   * *new Model()*, and is provided for convenience.
+   *
+   *   var Album = Ento()
+   *     .attr('title')
+   *     .attr('year', Number);
+   *
+   *   var item = Album.build({
+   *     title: 'Kind of Blue',
+   *     year: 1984
+   *    });
+   */
 
   Objekt.build = function () {
     var api, options, instance;
@@ -791,15 +995,15 @@ function each (list, fn) {
       options = arguments[0];
     }
 
-    
+    /*** Instance attributes: */
 
-    
+    /** raw: raw data */
     Object.defineProperty(instance, 'raw', { value: {}, enumerable: false });
 
-    
+    /** is: states */
     Object.defineProperty(instance, 'is', { value: {}, enumerable: false });
 
-    
+    /** api: Root instance */
     if (api) instance.api = api;
 
     instance.trigger('build', instance);
@@ -811,18 +1015,44 @@ function each (list, fn) {
     return instance;
   };
 
-  
+  /***
+   * Object events:
+   *
+   * There are some events available.
+   *
+   * ~ build: triggered when building
+   * ~ init: when initializing
+   * ~ change: when properties are changed
+   * ~ change:attr: when a given attribute is changed
+   */
 
-  
+  /***
+   * Object instances:
+   */
 
   Objekt.use({
 
-    
+    /**
+     * init:
+     * The constructor. Override this.
+     *
+     *     Model = Ento()
+     *       .use({
+     *         init: function() {
+     *         })
+     *       });
+     */
 
     init: function (options) {
     },
 
-    
+    /**
+     * set : set(key, value)
+     * Sets a `key` to `value`. If a setter function is available, use it.
+     *
+     *     .set({ title: 'House of Holes' });
+     *     .set('title', 'House of Holes');
+     */
 
     set: function (key, value, options) {
       // handle objects (.set({...}))
@@ -836,7 +1066,10 @@ function each (list, fn) {
         return this.setOne(key, value, options);
     },
 
-    
+    /**
+     * setMany : setMany(attrs, [options])
+     * (internal) handles *.set({...})*.
+     */
 
     setMany: function (attrs, options) {
       // ensure that the individual .setOne() does not trigger a
@@ -853,7 +1086,10 @@ function each (list, fn) {
         this.triggerChange(attrs);
     },
 
-    
+    /**
+     * setOne : setOne(key, value, [options])
+     * (internal) handles *.set(key, value)*.
+     */
 
     setOne: function (key, value, options) {
       var self = this;
@@ -872,7 +1108,14 @@ function each (list, fn) {
       }
     },
 
-    
+    /**
+     * (internal)
+     *
+     *     triggerChange({ title: 'x', bookAuthor: 'y' })
+     *
+     * emits 'change:title', 'change:bookAuthor', 'change:book_author', and
+     * 'change'
+     */
     triggerChange: function (attrs) {
       var self = this;
 
@@ -889,7 +1132,22 @@ function each (list, fn) {
       self.trigger('change', all);
     },
 
-    
+    /**
+     * get : get(attr)
+     * return the value of the given attribute *attr*. This is the
+     * same as using the getter, except it can do reserved keywords as
+     * well.
+     *
+     *   var Document = Ento()
+     *     .attr('title')
+     *     .attr('author');
+     *
+     *   var doc = new Document();
+     *
+     *   doc.title = "Manual";
+     *   doc.get('title')  //=> "Manual"
+     *   doc.title         //=> "Manual"
+     */
 
     get: function (attr) {
       if (arguments.length === 0)
@@ -922,7 +1180,11 @@ function each (list, fn) {
         return this[attr];
     },
 
-    
+    /**
+     * trigger : trigger(event)
+     * triggers an event `event`. Also triggers the event in the
+     * constructor.
+     */
 
     trigger: function (event) {
       Ento.events.trigger.apply(this, arguments);
@@ -930,7 +1192,10 @@ function each (list, fn) {
       return this;
     },
 
-    
+    /**
+     * toJSON:
+     * exports as a JSON-like object for serialization
+     */
 
     toJSON: function () {
       var object = {};
@@ -957,4 +1222,4 @@ function each (list, fn) {
   return Ento;
 
 }));
-
+}())

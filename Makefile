@@ -1,17 +1,19 @@
 sources = index.js $(wildcard lib/*.js)
+jsfuse = ./node_modules/.bin/jsfuse
+uglifyjs = ./node_modules/.bin/uglifyjs
 
 all: dist
 
 dist: dist/ento.js dist/ento.min.js verify stats
 
 dist/ento.js: $(sources)
-	node ./support/bake.js < $< > $@
+	$(jsfuse) $< > $@
 
 dist/%.min.js: dist/%.js
-	uglifyjs -m < $^ > $@
+	$(uglifyjs) -m < $^ > $@
 
 verify: dist/ento.js
-	@env distfile="$<" mocha -R progress
+	@env distfile="$<" mocha -R progress -b
 
 stats:
 	@echo "  loc:   " `cat dist/ento.js | wc -l`

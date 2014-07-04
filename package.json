@@ -14,15 +14,21 @@
   "dependencies": {
     "underscore": "^1.6.0"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rstacruz/ento.git"
+  },
   "devDependencies": {
-    "coffee-script": "^1.7.1",
-    "mocha": "^1.18.2",
-    "chai-fuzzy": "^1.4.0",
     "chai": "^1.9.1",
+    "chai-fuzzy": "^1.4.0",
+    "coffee-script": "^1.7.1",
+    "jscoverage": "^0.5.0-rc2",
+    "jsdom": "^0.10.5",
+    "jsfuse": "^0.9.11",
+    "mocha": "^1.18.2",
+    "ractive": "^0.4.0",
     "sinon": "^1.8.2",
     "sinon-chai": "^2.5.0",
-    "jscoverage": "^0.5.0-rc2",
-    "ractive": "^0.4.0",
-    "jsdom": "^0.10.5"
+    "uglify-js": "^2.4.14"
   }
 }
